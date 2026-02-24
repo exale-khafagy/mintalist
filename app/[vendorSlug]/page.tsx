@@ -10,14 +10,17 @@ type Props = {
 
 export const revalidate = 60;
 
-const MAIN_HOST = process.env.NEXT_PUBLIC_APP_URL
+// Use root domain (strip www) so vendor.mintalist.com works when NEXT_PUBLIC_APP_URL is https://www.mintalist.com
+const rawHost = process.env.NEXT_PUBLIC_APP_URL
   ? new URL(process.env.NEXT_PUBLIC_APP_URL).hostname
   : "mintalist.com";
+const MAIN_HOST = rawHost.startsWith("www.") ? rawHost.slice(4) : rawHost;
 
 function isSubdomain(host: string): boolean {
-  if (!host.endsWith(MAIN_HOST) || host === MAIN_HOST) return false;
-  const prefix = host.slice(0, -MAIN_HOST.length - 1);
-  return prefix.length > 0 && !prefix.includes(".") && prefix !== "www";
+  const normalized = host.startsWith("www.") ? host.slice(4) : host;
+  if (!normalized.endsWith(MAIN_HOST) || normalized === MAIN_HOST) return false;
+  const prefix = normalized.slice(0, -MAIN_HOST.length - 1);
+  return prefix.length > 0 && !prefix.includes(".");
 }
 
 export default async function VendorPublicPage({ params }: Props) {
@@ -37,10 +40,16 @@ export default async function VendorPublicPage({ params }: Props) {
 
   if (!vendor) notFound();
 
-  // Subdomain (e.g. vendor.mintalist.com) is only for PAID_2
-  const headerList = await headers();
-  const host = headerList.get("host") ?? "";
-  if (isSubdomain(host) && vendor.tier !== "PAID_2") {
+  // Subdomain (e.g. vendor.mintalist.com) is only for PAID_2; guard headers() so page still loads if it fails
+  let isSubdomainRequest = false;
+  try {
+    const headerList = await headers();
+    const host = headerList.get("host") ?? "";
+    isSubdomainRequest = isSubdomain(host);
+  } catch {
+    // headers() can fail in some runtimes; treat as path-based access
+  }
+  if (isSubdomainRequest && vendor.tier !== "PAID_2") {
     notFound();
   }
 
@@ -111,7 +120,7 @@ export default async function VendorPublicPage({ params }: Props) {
                         )}
                       </div>
                       <span className="shrink-0 text-sm font-semibold text-foreground">
-                        ${Number(item.price).toFixed(2)}
+                        {Number(item.price).toFixed(0)} LE
                       </span>
                     </li>
                   ))}

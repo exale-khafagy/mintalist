@@ -3,16 +3,40 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { useUser, UserButton } from "@clerk/nextjs";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 /**
- * Header nav for landing: desktop inline nav, mobile hamburger + drawer with large touch targets.
+ * Header nav for landing: desktop inline nav, mobile hamburger + drawer.
+ * When signed in: show user name + Dashboard. When signed out: Sign in + Get started.
  */
 export function LandingNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, isLoaded } = useUser();
 
-  const navLinks = (
+  const displayName =
+    user?.firstName ?? user?.fullName ?? user?.primaryEmailAddress?.emailAddress?.split("@")[0] ?? "Account";
+
+  const signedInNav = (
+    <>
+      <ThemeToggle />
+      <Link
+        href="/dashboard"
+        className="min-h-[44px] shrink-0 items-center justify-center rounded-full text-sm font-medium text-muted-foreground hover:text-foreground sm:inline-flex sm:px-3"
+      >
+        <span className="truncate max-w-[120px] sm:max-w-[180px]" title={displayName}>
+          {displayName}
+        </span>
+        <span className="ml-1 hidden sm:inline">· Dashboard</span>
+      </Link>
+      <div className="flex min-h-[44px] min-w-[44px] items-center justify-center">
+        <UserButton afterSignOutUrl="/" />
+      </div>
+    </>
+  );
+
+  const signedOutNav = (
     <>
       <ThemeToggle />
       <Link
@@ -30,11 +54,13 @@ export function LandingNav() {
     </>
   );
 
+  const navContent = isLoaded && user ? signedInNav : signedOutNav;
+
   return (
     <>
       {/* Desktop nav: visible from sm up */}
       <nav className="hidden items-center gap-1 sm:flex sm:gap-3" aria-label="Main">
-        {navLinks}
+        {navContent}
       </nav>
 
       {/* Mobile: hamburger + drawer */}
@@ -51,10 +77,7 @@ export function LandingNav() {
 
       {/* Mobile drawer overlay */}
       {mobileOpen && (
-        <div
-          className="fixed inset-0 z-40 sm:hidden"
-          aria-hidden
-        >
+        <div className="fixed inset-0 z-40 sm:hidden" aria-hidden>
           <button
             type="button"
             className="absolute inset-0 bg-black/50"
@@ -81,20 +104,38 @@ export function LandingNav() {
                 <ThemeToggle />
                 <span className="text-sm text-muted-foreground">Theme</span>
               </div>
-              <Link
-                href="/sign-in"
-                onClick={() => setMobileOpen(false)}
-                className="flex min-h-[48px] items-center rounded-lg px-4 text-sm font-medium text-foreground hover:bg-muted"
-              >
-                Sign in
-              </Link>
-              <Link
-                href="/sign-up"
-                onClick={() => setMobileOpen(false)}
-                className="mt-2 flex min-h-[48px] items-center justify-center rounded-full bg-emerald-600 px-4 text-sm font-medium text-white hover:bg-emerald-700"
-              >
-                Get started
-              </Link>
+              {isLoaded && user ? (
+                <>
+                  <div className="flex min-h-[48px] items-center gap-3 rounded-lg px-3">
+                    <span className="text-sm font-medium text-foreground truncate">{displayName}</span>
+                    <UserButton afterSignOutUrl="/" />
+                  </div>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex min-h-[48px] items-center rounded-lg px-4 text-sm font-medium text-foreground hover:bg-muted"
+                  >
+                    Dashboard
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/sign-in"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex min-h-[48px] items-center rounded-lg px-4 text-sm font-medium text-foreground hover:bg-muted"
+                  >
+                    Sign in
+                  </Link>
+                  <Link
+                    href="/sign-up"
+                    onClick={() => setMobileOpen(false)}
+                    className="mt-2 flex min-h-[48px] items-center justify-center rounded-full bg-emerald-600 px-4 text-sm font-medium text-white hover:bg-emerald-700"
+                  >
+                    Get started
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

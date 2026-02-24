@@ -7,15 +7,16 @@ const isProtectedRoute = createRouteMatcher([
   "/hub(.*)",
 ]);
 
-const MAIN_HOST = process.env.NEXT_PUBLIC_APP_URL
+const rawHost = process.env.NEXT_PUBLIC_APP_URL
   ? new URL(process.env.NEXT_PUBLIC_APP_URL).hostname
   : "mintalist.com";
+const MAIN_HOST = rawHost.startsWith("www.") ? rawHost.slice(4) : rawHost;
 
 function getSubdomain(host: string): string | null {
-  const base = MAIN_HOST;
-  if (!host.endsWith(base) || host === base) return null;
-  const prefix = host.slice(0, -base.length - 1);
-  if (prefix.includes(".") || prefix === "www") return null;
+  const normalized = host.startsWith("www.") ? host.slice(4) : host;
+  if (!normalized.endsWith(MAIN_HOST) || normalized === MAIN_HOST) return null;
+  const prefix = normalized.slice(0, -MAIN_HOST.length - 1);
+  if (prefix.includes(".")) return null;
   return prefix || null;
 }
 
