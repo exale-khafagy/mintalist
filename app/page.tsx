@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       <LandingBackground />
-      <header className="fixed top-0 left-0 right-0 z-10 h-14 border-b border-border bg-card/95 px-3 backdrop-blur sm:h-16 sm:px-4">
+      <header className="fixed top-0 left-0 right-0 z-30 h-14 border-b border-border bg-card/95 px-3 backdrop-blur sm:h-16 sm:px-4">
         <div className="mx-auto flex h-full max-w-5xl items-center justify-between">
           <LandingHeader />
           <nav className="flex items-center gap-1 sm:gap-3">
@@ -30,7 +30,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="relative z-10 flex flex-1 items-center px-4 pt-24 pb-16 sm:pt-24 sm:pb-20">
+      <main className="relative flex flex-1 items-center px-4 pt-24 pb-16 sm:pt-24 sm:pb-20">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 md:flex-row md:items-center">
           <section className="flex-1 text-center md:text-left">
             <p className="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-500/30">
