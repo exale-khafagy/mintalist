@@ -1,0 +1,124 @@
+// Mintalist — Phase 1 + 2 + 3 + 4 schema
+// Run: npx prisma generate && npx prisma db push
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Tier {
+  FREE
+  PAID_1
+  PAID_2
+}
+
+model Vendor {
+  id            String   @id @default(cuid())
+  clerkUserId   String   @unique
+  name          String
+  slug          String   @unique
+  logoUrl       String?
+  brandColor    String   @default("#10B981")
+  tier                  Tier     @default(FREE)
+  backgroundImageUrl    String?
+  address               String?
+  phone                 String?
+  locationName          String?
+
+  menuItems       MenuItem[]
+  socialLinks     VendorSocialLink[]
+  customLinks     VendorCustomLink[]
+  payments        Payment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VendorSocialLink {
+  id       String @id @default(cuid())
+  platform String
+  url      String
+
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([vendorId])
+}
+
+model VendorCustomLink {
+  id    String @id @default(cuid())
+  title String
+  url   String
+
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([vendorId])
+}
+
+model MenuItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  isAvailable Boolean  @default(true)
+
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([vendorId])
+}
+
+model Voucher {
+  id                 String    @id @default(cuid())
+  code               String    @unique
+  tier               Tier
+  redeemedAt         DateTime?
+  redeemedByVendorId String?
+
+  createdAt DateTime  @default(now())
+  expiresAt DateTime?
+
+  @@index([code])
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum BillingPeriod {
+  MONTHLY
+  ANNUAL
+}
+
+model Payment {
+  id                  String         @id @default(cuid())
+  vendorId            String
+  vendor              Vendor         @relation(fields: [vendorId], references: [id])
+  tier                Tier
+  billingPeriod       BillingPeriod? // MONTHLY 100 LE, ANNUAL 1000 LE for Gold/Platinum
+  amountCents         Int
+  currency            String         @default("EGP")
+  status              PaymentStatus  @default(PENDING)
+  paymobOrderId       String?        @unique
+  paymobTransactionId String?
+
+  createdAt DateTime @default(now())
+
+  @@index([vendorId])
+  @@index([paymobOrderId])
+}
