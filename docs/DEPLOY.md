@@ -40,7 +40,7 @@ Set these in Vercel: **Project → Settings → Environment Variables**. Use **P
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Yes | Clerk publishable key (production) |
 | `CLERK_SECRET_KEY` | Yes | Clerk secret key (production) |
 | `CLERK_WEBHOOK_SECRET` | Yes | From Clerk Dashboard → Webhooks → Signing Secret (endpoint: `https://your-domain.com/api/webhooks/clerk`) |
-| `NEXT_PUBLIC_APP_URL` | Yes | Your app URL, e.g. `https://mintalist.com` (no trailing slash). Used for links, QR, subdomain detection. |
+| `NEXT_PUBLIC_APP_URL` | Yes | The **exact** URL people use to open your app, e.g. `https://www.mintalist.com` or `https://mintalist.com` (no trailing slash). Dashboard “Your public menu” link and QR codes use this. Must match your Vercel domain. |
 | `UPLOADTHING_TOKEN` | Yes | UploadThing token (or use UploadThing’s Vercel env integration) |
 | `UPLOADTHING_SECRET` | Yes | UploadThing secret |
 | `UPLOADTHING_APP_ID` | Yes | UploadThing app ID |
@@ -52,6 +52,8 @@ Set these in Vercel: **Project → Settings → Environment Variables**. Use **P
 | `PAYMOB_USERNAME` / `PAYMOB_PASSWORD` | Optional | If Paymob auth uses username/password instead of API key |
 
 **Hub access:** To open `/hub` as an admin (e.g. founder), set `HUB_ADMIN_EMAILS=khafagy.ahmedibrahim@gmail.com` (or your email) in Vercel. Sign in with that email, then go to `https://your-domain.com/hub`. See [HUB_SETUP.md](./HUB_SETUP.md).
+
+**DNS and “can’t reach this page” (NXDOMAIN):** If the dashboard shows a link like `https://mintalist.com/your-slug` but opening it gives “can’t reach this page” or `DNS_PROBE_FINISHED_NXDOMAIN`, the domain is not resolving. Add the domain in Vercel (**Project → Settings → Domains**), then in your DNS provider point `mintalist.com` and/or `www.mintalist.com` to Vercel (CNAME or A record as Vercel instructs). Set `NEXT_PUBLIC_APP_URL` to the URL that actually works (e.g. `https://www.mintalist.com` if you use www).
 
 ---
 
