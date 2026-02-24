@@ -3,34 +3,23 @@ import Link from "next/link";
 import { ExaleFooter } from "@/components/ExaleFooter";
 import { LandingBackground } from "@/components/LandingBackground";
 import { LandingHeader } from "@/components/LandingHeader";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { LandingNav } from "@/components/LandingNav";
 
 export default function Home() {
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       <LandingBackground />
-      <header className="fixed top-0 left-0 right-0 z-30 h-14 border-b border-border bg-card/95 px-3 backdrop-blur sm:h-16 sm:px-4">
+      <header
+        className="fixed top-0 left-0 right-0 z-30 h-14 border-b border-border bg-card/95 px-3 backdrop-blur sm:h-16 sm:px-4"
+        style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
+      >
         <div className="mx-auto flex h-full max-w-5xl items-center justify-between">
           <LandingHeader />
-          <nav className="flex items-center gap-1 sm:gap-3">
-            <ThemeToggle />
-            <Link
-              href="/sign-in"
-              className="hidden text-xs font-medium text-muted-foreground hover:text-foreground sm:inline-block sm:text-sm"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/sign-up"
-              className="rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-emerald-700 sm:px-4 sm:py-2 sm:text-sm"
-            >
-              Get started
-            </Link>
-          </nav>
+          <LandingNav />
         </div>
       </header>
 
-      <main className="relative flex flex-1 items-center px-4 pt-24 pb-16 sm:pt-24 sm:pb-20">
+      <main className="relative z-0 flex flex-1 items-center overflow-x-hidden px-4 pb-16 sm:pb-20" style={{ paddingTop: "calc(6rem + env(safe-area-inset-top, 0px))" }}>
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 md:flex-row md:items-center">
           <section className="flex-1 text-center md:text-left">
             <p className="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-500/30">
@@ -62,7 +51,7 @@ export default function Home() {
             </p>
           </section>
 
-          <section className="flex-1">
+          <section className="min-w-0 flex-1">
             <div className="mx-auto w-full max-w-md rounded-3xl bg-card/90 p-5 shadow-lg ring-1 ring-border/60 backdrop-blur">
               <div className="flex items-center justify-between gap-3">
                 <div>

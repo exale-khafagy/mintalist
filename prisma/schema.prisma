@@ -122,3 +122,28 @@ model Payment {
   @@index([vendorId])
   @@index([paymobOrderId])
 }
+
+// Employee vendor visit / lead — filled when staff close a deal on the ground
+model VendorVisit {
+  id              String   @id @default(cuid())
+  // Who filled the form
+  employeeName    String
+  employeeEmail   String
+  // Vendor / business
+  businessName    String
+  contactName     String
+  contactPhone    String
+  contactEmail    String?
+  address         String?
+  locationName    String?  // e.g. "Downtown branch"
+  agreedTier      Tier     // Silver (FREE), Gold (PAID_1), Platinum (PAID_2)
+  visitDate       DateTime @default(now())
+  notes           String?  // Free text from the visit
+  status          String   @default("PENDING") // PENDING | CONTACTED | ONBOARDED
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([visitDate])
+}
