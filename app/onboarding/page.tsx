@@ -515,25 +515,29 @@ function OnboardingPlanStep({ form }: { form: ReturnType<typeof useForm<Onboardi
             <li>No ads</li>
           </ul>
           {plan === "GOLD" && (
-            <div className="mt-3 flex gap-4">
-              <label className="flex items-center gap-2 text-sm">
+            <div className="mt-3 flex flex-col gap-1 text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-2">
                 <input
                   type="radio"
                   name="goldPeriod"
                   checked={period === "MONTHLY"}
                   onChange={() => form.setValue("billingPeriod", "MONTHLY")}
                 />
-                100 LE / month
-              </label>
-              <label className="flex items-center gap-2 text-sm">
+                <span>
+                  100 LE / month – first 4 months 50% off.
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
                 <input
                   type="radio"
                   name="goldPeriod"
                   checked={period === "ANNUAL"}
                   onChange={() => form.setValue("billingPeriod", "ANNUAL")}
                 />
-                1000 LE / year
-              </label>
+                <span>
+                  Annual: 600 LE for the first year, then 1000 LE / year on renewal.
+                </span>
+              </div>
             </div>
           )}
         </label>
@@ -557,25 +561,29 @@ function OnboardingPlanStep({ form }: { form: ReturnType<typeof useForm<Onboardi
             <li>Priority support</li>
           </ul>
           {plan === "PLATINUM" && (
-            <div className="mt-3 flex gap-4">
-              <label className="flex items-center gap-2 text-sm">
+            <div className="mt-3 flex flex-col gap-1 text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-2">
                 <input
                   type="radio"
                   name="platinumPeriod"
                   checked={period === "MONTHLY"}
                   onChange={() => form.setValue("billingPeriod", "MONTHLY")}
                 />
-                100 LE / month
-              </label>
-              <label className="flex items-center gap-2 text-sm">
+                <span>
+                  150 LE / month – first 4 months at 75 LE.
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
                 <input
                   type="radio"
                   name="platinumPeriod"
                   checked={period === "ANNUAL"}
                   onChange={() => form.setValue("billingPeriod", "ANNUAL")}
                 />
-                1000 LE / year
-              </label>
+                <span>
+                  Annual: 900 LE for the first year, then 1500 LE / year on renewal.
+                </span>
+              </div>
             </div>
           )}
         </label>

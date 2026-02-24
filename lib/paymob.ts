@@ -9,9 +9,17 @@ const PAYMOB_BASE = "https://accept.paymobsolutions.com/api";
 export type Tier = "PAID_1" | "PAID_2";
 export type BillingPeriod = "MONTHLY" | "ANNUAL";
 
-/** Gold/Platinum: 100 LE/month or 1000 LE/year. Amounts in cents (EGP). */
-const MONTHLY_CENTS = 10_000; // 100 EGP
-const ANNUAL_CENTS = 100_000; // 1000 EGP
+/**
+ * Base pricing (amounts in cents, EGP):
+ * - Gold (PAID_1):   100 LE / month, 600 LE / year (first year).
+ * - Platinum (PAID_2): 150 LE / month, 900 LE / year (first year).
+ *
+ * Renewal pricing can be adjusted later via env overrides or code changes.
+ */
+const GOLD_MONTHLY_CENTS = 10_000; // 100 EGP
+const GOLD_ANNUAL_CENTS = 60_000; // 600 EGP
+const PLATINUM_MONTHLY_CENTS = 15_000; // 150 EGP
+const PLATINUM_ANNUAL_CENTS = 90_000; // 900 EGP
 
 function getConfig() {
   const apiKey = process.env.PAYMOB_API_KEY;
@@ -126,5 +134,10 @@ export function getAmountCents(tier: Tier, period: BillingPeriod = "MONTHLY"): n
   const annualEnv = process.env.PAYMOB_ANNUAL_CENTS;
   if (period === "ANNUAL" && annualEnv) return parseInt(annualEnv, 10);
   if (period === "MONTHLY" && monthlyEnv) return parseInt(monthlyEnv, 10);
-  return period === "ANNUAL" ? ANNUAL_CENTS : MONTHLY_CENTS;
+
+  const isAnnual = period === "ANNUAL";
+  if (tier === "PAID_1") {
+    return isAnnual ? GOLD_ANNUAL_CENTS : GOLD_MONTHLY_CENTS;
+  }
+  return isAnnual ? PLATINUM_ANNUAL_CENTS : PLATINUM_MONTHLY_CENTS;
 }

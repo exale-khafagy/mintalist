@@ -38,7 +38,7 @@ export default async function DashboardCheckoutPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-xl">Gold</CardTitle>
             <CardDescription className="text-base">
-              Custom URL, background image, no ads. Monthly or annual.
+              Custom URL, background image, no ads. Launch promo on first months and first year.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -46,7 +46,9 @@ export default async function DashboardCheckoutPage() {
               <p className="text-2xl font-bold tabular-nums text-foreground">
                 100 <span className="text-sm font-normal text-muted-foreground">LE / month</span>
               </p>
-              <p className="mt-0.5 text-sm text-muted-foreground">or 1000 LE / year (save more)</p>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                First 4 months 50% off. Annual: 600 LE for the first year, 1000 LE / year on renewal.
+              </p>
             </div>
             <CheckoutForm tier="PAID_1" />
           </CardContent>
@@ -65,9 +67,11 @@ export default async function DashboardCheckoutPage() {
           <CardContent className="space-y-4">
             <div className="rounded-lg bg-muted/50 px-4 py-3">
               <p className="text-2xl font-bold tabular-nums text-foreground">
-                100 <span className="text-sm font-normal text-muted-foreground">LE / month</span>
+                150 <span className="text-sm font-normal text-muted-foreground">LE / month</span>
               </p>
-              <p className="mt-0.5 text-sm text-muted-foreground">or 1000 LE / year (save more)</p>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                First 4 months at 75 LE. Annual: 900 LE for the first year, 1500 LE / year on renewal.
+              </p>
             </div>
             <CheckoutForm tier="PAID_2" />
           </CardContent>

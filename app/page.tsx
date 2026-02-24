@@ -1,12 +1,14 @@
 import Link from "next/link";
 
 import { ExaleFooter } from "@/components/ExaleFooter";
+import { LandingBackground } from "@/components/LandingBackground";
 import { LandingHeader } from "@/components/LandingHeader";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="relative flex min-h-screen flex-col bg-background">
+      <LandingBackground />
       <header className="fixed top-0 left-0 right-0 z-10 h-14 border-b border-border bg-card px-3 sm:h-16 sm:px-4">
         <div className="mx-auto flex h-full max-w-5xl items-center justify-between">
           <LandingHeader />
@@ -28,7 +30,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex flex-1 flex-col items-center justify-center px-4 pt-24 pb-16 text-center sm:pt-20 sm:pb-20">
+      <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pt-24 pb-16 text-center sm:pt-20 sm:pb-20">
         <h1 className="max-w-2xl text-3xl font-bold tracking-tight text-foreground sm:text-4xl sm:text-5xl">
           Your menu. One link.
         </h1>

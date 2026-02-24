@@ -123,3 +123,38 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Landing page moving background */
+@keyframes landing-float-1 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(8%, 12%) scale(1.05);
+  }
+  66% {
+    transform: translate(-5%, -8%) scale(0.98);
+  }
+}
+@keyframes landing-float-2 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-10%, -5%) scale(1.02);
+  }
+  66% {
+    transform: translate(6%, 10%) scale(0.97);
+  }
+}
+@keyframes landing-float-3 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-8%, -12%) scale(1.03);
+  }
+}

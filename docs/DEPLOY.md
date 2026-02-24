@@ -51,6 +51,8 @@ Set these in Vercel: **Project → Settings → Environment Variables**. Use **P
 | `PAYMOB_HMAC_SECRET` | Recommended | Verify redirect callbacks (from Paymob dashboard) |
 | `PAYMOB_USERNAME` / `PAYMOB_PASSWORD` | Optional | If Paymob auth uses username/password instead of API key |
 
+**Hub access:** To open `/hub` as an admin (e.g. founder), set `HUB_ADMIN_EMAILS=khafagy.ahmedibrahim@gmail.com` (or your email) in Vercel. Sign in with that email, then go to `https://your-domain.com/hub`. See [HUB_SETUP.md](./HUB_SETUP.md).
+
 ---
 
 ## 4. Database migrations

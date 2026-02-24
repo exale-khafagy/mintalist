@@ -110,7 +110,7 @@ model Payment {
   vendorId            String
   vendor              Vendor         @relation(fields: [vendorId], references: [id])
   tier                Tier
-  billingPeriod       BillingPeriod? // MONTHLY 100 LE, ANNUAL 1000 LE for Gold/Platinum
+  billingPeriod       BillingPeriod? // See lib/paymob.ts for current pricing (Gold vs Platinum, monthly vs annual)
   amountCents         Int
   currency            String         @default("EGP")
   status              PaymentStatus  @default(PENDING)
