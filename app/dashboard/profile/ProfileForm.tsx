@@ -51,6 +51,17 @@ export function ProfileForm({ tier, defaultValues }: Props) {
   }
   const canSetBackgroundImage = canEditSlug;
 
+  async function saveProfile(payload: Record<string, string | undefined>) {
+    const res = await fetch("/api/vendor/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error ?? "Failed to save");
+    router.refresh();
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -64,14 +75,7 @@ export function ProfileForm({ tier, defaultValues }: Props) {
       if (canEditSlug) payload.slug = slug;
       if (canSetBackgroundImage) payload.backgroundImageUrl = backgroundImageUrl || undefined;
 
-      const res = await fetch("/api/vendor/profile", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error ?? "Failed to save");
-      router.refresh();
+      await saveProfile(payload);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -170,7 +174,13 @@ export function ProfileForm({ tier, defaultValues }: Props) {
           endpoint="logoUploader"
           onClientUploadComplete={(res) => {
             const url = res?.[0]?.url;
-            if (url) setLogoUrl(url);
+            if (url) {
+              setLogoUrl(url);
+              const payload: Record<string, string | undefined> = { name, brandColor, logoUrl: url };
+              if (canEditSlug) payload.slug = slug;
+              if (canSetBackgroundImage) payload.backgroundImageUrl = backgroundImageUrl || undefined;
+              saveProfile(payload).catch((e) => setError(e instanceof Error ? e.message : "Failed to save"));
+            }
           }}
           onUploadError={(error: Error) => {
             setError(error.message);
@@ -206,7 +216,13 @@ export function ProfileForm({ tier, defaultValues }: Props) {
             endpoint="backgroundImageUploader"
             onClientUploadComplete={(res) => {
               const url = res?.[0]?.url;
-              if (url) setBackgroundImageUrl(url);
+              if (url) {
+                setBackgroundImageUrl(url);
+                const payload: Record<string, string | undefined> = { name, brandColor, logoUrl: logoUrl || undefined };
+                if (canEditSlug) payload.slug = slug;
+                payload.backgroundImageUrl = url;
+                saveProfile(payload).catch((e) => setError(e instanceof Error ? e.message : "Failed to save"));
+              }
             }}
             onUploadError={(error: Error) => {
               setError(error.message);

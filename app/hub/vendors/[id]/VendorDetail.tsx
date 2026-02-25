@@ -109,21 +109,24 @@ export function VendorDetail({ vendor, baseUrl }: VendorDetailProps) {
         </>
       )}
 
-      {/* Preview Modal */}
+      {/* Preview Modal: real public page in iframe so background image loads */}
       {showPreview && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="max-w-md rounded-lg bg-white p-6">
-            <h2 className="text-lg font-semibold">Preview</h2>
-            <p className="mt-2 text-sm text-zinc-600">
-              This is a preview of the vendor's public page. In a real implementation, embed an iframe or screenshot.
-            </p>
+        <div className="fixed inset-0 z-50 flex flex-col bg-black/70">
+          <div className="flex shrink-0 items-center justify-between border-b border-zinc-700 bg-zinc-900 px-4 py-2">
+            <h2 className="text-sm font-medium text-white">Preview: {vendor.name}</h2>
             <button
               onClick={() => setShowPreview(false)}
-              className="mt-4 rounded bg-zinc-200 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-300"
+              className="rounded bg-zinc-600 px-3 py-1.5 text-sm text-white hover:bg-zinc-500"
             >
               Close
             </button>
           </div>
+          <iframe
+            src={`${baseUrl}/${vendor.slug}`}
+            title={`${vendor.name} public page`}
+            className="flex-1 w-full min-h-0 bg-white"
+            sandbox="allow-same-origin allow-scripts"
+          />
         </div>
       )}
     </div>
