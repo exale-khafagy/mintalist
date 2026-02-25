@@ -13,7 +13,7 @@ export default async function HubPromoPage() {
     <div className="mx-auto max-w-4xl space-y-6">
       <div>
         <h1 className="text-2xl font-semibold text-zinc-900">Promo codes</h1>
-        <p className="mt-1 text-sm text-zinc-500">
+        <p className="mt-1 text-sm text-zinc-600">
           Generate voucher codes for promotions. Vendors redeem them in Settings.
         </p>
       </div>
@@ -40,14 +40,14 @@ export default async function HubPromoPage() {
           </CardHeader>
           <CardContent>
             {vouchers.length === 0 ? (
-              <p className="text-sm text-zinc-500">No vouchers yet.</p>
+              <p className="text-sm text-zinc-600">No vouchers yet.</p>
             ) : (
               <div className="space-y-2">
                 {vouchers.map((v) => (
                   <div key={v.id} className="flex items-center justify-between rounded border p-2">
                     <div>
                       <p className="font-mono text-sm">{v.code}</p>
-                      <p className="text-xs text-zinc-500">
+                      <p className="text-xs text-zinc-600">
                         {v.tier} • Expires {v.expiresAt ? new Date(v.expiresAt).toLocaleDateString() : "Never"}
                         {v.redeemedAt && " • Redeemed"}
                       </p>

@@ -73,6 +73,7 @@ export async function POST(req: Request) {
     latitude?: number | null;
     longitude?: number | null;
     planPreference?: string | null;
+    tier?: "FREE" | "PAID_1" | "PAID_2";
   } = {};
   if (body.name !== undefined) updateData.name = body.name.trim();
   if (body.brandColor !== undefined) updateData.brandColor = body.brandColor;
@@ -82,7 +83,12 @@ export async function POST(req: Request) {
   if (body.phone !== undefined) updateData.phone = body.phone?.trim() || null;
   if (body.latitude !== undefined) updateData.latitude = body.latitude ?? null;
   if (body.longitude !== undefined) updateData.longitude = body.longitude ?? null;
-  if (body.planPreference !== undefined) updateData.planPreference = body.planPreference ?? null;
+  if (body.planPreference !== undefined) {
+    updateData.planPreference = body.planPreference ?? null;
+    // Apply tier when they chose a trial: Gold 1 month → PAID_1, Platinum 2 weeks → PAID_2
+    if (body.planPreference === "GOLD_1_MONTH") updateData.tier = "PAID_1";
+    else if (body.planPreference === "PLATINUM_2_WEEKS") updateData.tier = "PAID_2";
+  }
 
   await prisma.vendor.update({
     where: { clerkUserId: userId },

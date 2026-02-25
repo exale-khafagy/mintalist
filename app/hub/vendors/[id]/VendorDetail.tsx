@@ -70,7 +70,7 @@ export function VendorDetail({ vendor, baseUrl }: VendorDetailProps) {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-xl font-semibold text-zinc-900">{vendor.name}</h1>
-              <p className="mt-1 font-mono text-sm text-zinc-500">{baseUrl}/{vendor.slug}</p>
+              <p className="mt-1 font-mono text-sm text-zinc-600">{baseUrl}/{vendor.slug}</p>
             </div>
             <button
               onClick={() => setIsEditing(true)}
@@ -97,12 +97,12 @@ export function VendorDetail({ vendor, baseUrl }: VendorDetailProps) {
           </div>
 
           <dl className="mt-6 grid grid-cols-2 gap-2 text-sm">
-            <dt className="text-zinc-500">Menu items</dt>
-            <dd className="font-medium">{vendor._count.menuItems}</dd>
-            <dt className="text-zinc-500">Social links</dt>
-            <dd className="font-medium">{vendor._count.socialLinks}</dd>
-            <dt className="text-zinc-500">Custom links</dt>
-            <dd className="font-medium">{vendor._count.customLinks}</dd>
+            <dt className="text-zinc-700">Menu items</dt>
+            <dd className="font-medium text-zinc-900">{vendor._count.menuItems}</dd>
+            <dt className="text-zinc-700">Social links</dt>
+            <dd className="font-medium text-zinc-900">{vendor._count.socialLinks}</dd>
+            <dt className="text-zinc-700">Custom links</dt>
+            <dd className="font-medium text-zinc-900">{vendor._count.customLinks}</dd>
           </dl>
 
           <HubVendorForm vendorId={vendor.id} currentTier={vendor.tier} />

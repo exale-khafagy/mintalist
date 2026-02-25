@@ -41,16 +41,20 @@ export function HubVendorForm({
 
   return (
     <form onSubmit={handleSubmit} className="mt-6 border-t border-zinc-200 pt-6">
-      <h2 className="text-sm font-medium text-zinc-700">Change tier</h2>
-      <p className="mt-1 text-xs text-zinc-500">
+      <h2 className="text-sm font-medium text-zinc-800">Change tier</h2>
+      <p className="mt-1 text-xs text-zinc-600">
         Override this vendor&apos;s plan (e.g. for support or promotions).
       </p>
       {error && (
         <p className="mt-2 text-sm text-red-600">{error}</p>
       )}
-      <div className="mt-3 flex flex-wrap items-center gap-3">
-        {(["FREE", "PAID_1", "PAID_2"] as const).map((t) => (
-          <label key={t} className="flex items-center gap-2">
+      <div className="mt-3 flex flex-wrap items-center gap-4">
+        {([
+          { value: "FREE" as const, label: "Silver" },
+          { value: "PAID_1" as const, label: "Gold" },
+          { value: "PAID_2" as const, label: "Platinum" },
+        ]).map(({ value: t, label }) => (
+          <label key={t} className="flex cursor-pointer items-center gap-2">
             <input
               type="radio"
               name="tier"
@@ -59,7 +63,7 @@ export function HubVendorForm({
               onChange={() => setTier(t)}
               className="h-4 w-4"
             />
-            <span className="text-sm">{t}</span>
+            <span className="text-sm font-medium text-zinc-800">{label}</span>
           </label>
         ))}
         <Button type="submit" disabled={loading} size="sm">

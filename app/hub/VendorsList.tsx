@@ -54,7 +54,7 @@ export function VendorsList({ vendors, baseUrl }: VendorsListProps) {
 
       {/* Vendors Grid */}
       {filteredVendors.length === 0 ? (
-        <p className="text-center text-sm text-zinc-500">No vendors found.</p>
+        <p className="text-center text-sm text-zinc-600">No vendors found.</p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredVendors.map((v) => (

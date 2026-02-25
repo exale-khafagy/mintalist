@@ -18,7 +18,7 @@ export default async function HubVendorsPage() {
     <div className="mx-auto max-w-6xl space-y-6">
       <div>
         <h1 className="text-2xl font-semibold text-zinc-900">Vendors</h1>
-        <p className="mt-1 text-sm text-zinc-500">
+        <p className="mt-1 text-sm text-zinc-600">
           Manage businesses, tiers, and services. Use Promo codes to generate vouchers.
         </p>
       </div>

@@ -25,7 +25,7 @@ export default async function HubVendorPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="flex items-center gap-4">
-        <Link href="/hub" className="text-sm text-zinc-500 hover:text-zinc-700">
+        <Link href="/hub" className="text-sm font-medium text-zinc-600 hover:text-zinc-900">
           ← Vendors
         </Link>
       </div>
