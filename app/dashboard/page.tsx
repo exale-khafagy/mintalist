@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { getCurrentVendor } from "@/lib/auth";
+import { getVendorPublicUrl } from "@/lib/urls";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DashboardTour } from "@/components/DashboardTour";
 
@@ -15,9 +22,8 @@ export default async function DashboardOverviewPage() {
   const vendor = await getCurrentVendor();
   if (!vendor) return null;
 
-  const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL || "https://mintalist.com";
-  const publicUrl = `${baseUrl}/${vendor.slug}`;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://mintalist.com";
+  const publicUrl = getVendorPublicUrl(vendor.slug, vendor.tier, baseUrl);
 
   const hasLogo = !!vendor.logoUrl;
   const hasMenuItems = vendor.menuItems.length > 0;

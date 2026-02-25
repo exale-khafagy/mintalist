@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { getVendorPublicUrl } from "@/lib/urls";
 import { HubVendorForm } from "./HubVendorForm";
 
 interface Vendor {
@@ -22,6 +23,8 @@ export function VendorDetail({ vendor, baseUrl }: VendorDetailProps) {
   const [name, setName] = useState(vendor.name);
   const [slug, setSlug] = useState(vendor.slug);
   const [showPreview, setShowPreview] = useState(false);
+
+  const publicUrl = getVendorPublicUrl(vendor.slug, vendor.tier, baseUrl);
 
   const handleSave = async () => {
     // TODO: Implement save logic via API
@@ -70,7 +73,7 @@ export function VendorDetail({ vendor, baseUrl }: VendorDetailProps) {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-xl font-semibold text-zinc-900">{vendor.name}</h1>
-              <p className="mt-1 font-mono text-sm text-zinc-600">{baseUrl}/{vendor.slug}</p>
+              <p className="mt-1 font-mono text-sm text-zinc-600">{publicUrl}</p>
             </div>
             <button
               onClick={() => setIsEditing(true)}
@@ -81,7 +84,7 @@ export function VendorDetail({ vendor, baseUrl }: VendorDetailProps) {
           </div>
           <div className="mt-4 flex gap-4">
             <a
-              href={`${baseUrl}/${vendor.slug}`}
+              href={publicUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-emerald-600 hover:underline"
@@ -122,7 +125,7 @@ export function VendorDetail({ vendor, baseUrl }: VendorDetailProps) {
             </button>
           </div>
           <iframe
-            src={`${baseUrl}/${vendor.slug}`}
+            src={publicUrl}
             title={`${vendor.name} public page`}
             className="flex-1 w-full min-h-0 bg-white"
             sandbox="allow-same-origin allow-scripts"

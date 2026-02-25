@@ -1,20 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UploadDropzone } from "@/lib/uploadthing";
+import { getMainHost, getVendorPublicUrl, type Tier } from "@/lib/urls";
 
 const BASE_URL =
   typeof process !== "undefined" && process.env.NEXT_PUBLIC_APP_URL
     ? process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "")
     : "https://mintalist.com";
 
-type Tier = "FREE" | "PAID_1" | "PAID_2";
+const SLUG_REGEX = /^[a-z0-9-]+$/;
+const MIN_SLUG_LENGTH = 2;
+
+function isSlugValid(s: string): boolean {
+  return s.length >= MIN_SLUG_LENGTH && SLUG_REGEX.test(s);
+}
 
 type Props = {
   tier: Tier;
@@ -39,9 +45,50 @@ export function ProfileForm({ tier, defaultValues }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
+  const slugCheckRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const canEditSlug = tier === "PAID_1" || tier === "PAID_2";
-  const menuLink = `${BASE_URL}/${slug}`;
+  const menuLink = getVendorPublicUrl(slug, tier, BASE_URL);
+  const mainHost = getMainHost(BASE_URL);
+
+  const slugUnchanged = slug === defaultValues.slug;
+  const slugValid = isSlugValid(slug);
+
+  // Debounced slug availability check when user edits slug (Gold/Platinum only)
+  useEffect(() => {
+    if (!canEditSlug) return;
+    if (slugUnchanged) {
+      setSlugAvailable(true);
+      return;
+    }
+    if (!slugValid) {
+      setSlugAvailable(false);
+      return;
+    }
+    if (slugCheckRef.current) clearTimeout(slugCheckRef.current);
+    setSlugAvailable(null);
+    slugCheckRef.current = setTimeout(async () => {
+      slugCheckRef.current = null;
+      try {
+        const res = await fetch(
+          `/api/vendor/slug-availability?slug=${encodeURIComponent(slug)}`
+        );
+        const data = await res.json().catch(() => ({}));
+        setSlugAvailable(Boolean(data.available));
+      } catch {
+        setSlugAvailable(false);
+      }
+    }, 400);
+    return () => {
+      if (slugCheckRef.current) clearTimeout(slugCheckRef.current);
+    };
+  }, [canEditSlug, slug, slugUnchanged, slugValid]);
+
+  const canSaveSlug =
+    !canEditSlug || slugUnchanged || slugAvailable === true;
+  const saveDisabled =
+    loading || (canEditSlug && !canSaveSlug);
 
   function copyMenuLink() {
     void navigator.clipboard.writeText(menuLink).then(() => {
@@ -99,20 +146,73 @@ export function ProfileForm({ tier, defaultValues }: Props) {
       </div>
       <div>
         <label className="mb-1 block text-sm font-medium">
-          {canEditSlug ? "Menu URL" : "Your menu link"}
+          {canEditSlug
+            ? tier === "PAID_2"
+              ? "Menu URL (subdomain)"
+              : "Menu URL"
+            : "Your menu link"}
         </label>
         {canEditSlug ? (
-          <div className="flex items-center gap-2 rounded-md border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
-            <span>mintalist.com/</span>
-            <Input
-              value={slug}
-              onChange={(e) =>
-                setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))
-              }
-              required
-              className="flex-1 border-0 bg-transparent p-0 text-foreground focus-visible:ring-0"
-              placeholder="my-cafe"
-            />
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 rounded-md border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
+              {tier === "PAID_2" ? (
+                <>
+                  <span>https://</span>
+                  <Input
+                    value={slug}
+                    onChange={(e) =>
+                      setSlug(
+                        e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-")
+                      )
+                    }
+                    required
+                    className="flex-1 border-0 bg-transparent p-0 text-foreground focus-visible:ring-0"
+                    placeholder="yourcafe"
+                  />
+                  <span>.{mainHost}</span>
+                </>
+              ) : (
+                <>
+                  <span>{mainHost}/</span>
+                  <Input
+                    value={slug}
+                    onChange={(e) =>
+                      setSlug(
+                        e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-")
+                      )
+                    }
+                    required
+                    className="flex-1 border-0 bg-transparent p-0 text-foreground focus-visible:ring-0"
+                    placeholder="my-cafe"
+                  />
+                </>
+              )}
+            </div>
+            {!slugUnchanged && (
+              <p className="text-xs text-muted-foreground">
+                {slugAvailable === null && slugValid && (
+                  <span className="inline-flex items-center gap-1">
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    Checking...
+                  </span>
+                )}
+                {slugAvailable === true && (
+                  <span className="text-emerald-600 dark:text-emerald-400">
+                    Available
+                  </span>
+                )}
+                {slugAvailable === false && (
+                  <span className="text-red-600 dark:text-red-400">
+                    Not available
+                  </span>
+                )}
+                {!slugValid && slug.length > 0 && (
+                  <span className="text-amber-600 dark:text-amber-400">
+                    Use 2+ letters, numbers, or hyphens only
+                  </span>
+                )}
+              </p>
+            )}
           </div>
         ) : (
           <>
@@ -225,7 +325,9 @@ export function ProfileForm({ tier, defaultValues }: Props) {
               }
             }}
             onUploadError={(error: Error) => {
-              setError(error.message);
+              setError(
+                "Upload failed. You can paste an image URL below, or check that UploadThing is configured in your environment."
+              );
             }}
             className="ut-label:text-sm ut-button:bg-emerald-600 ut-button:ut-readying:bg-emerald-600/50"
           />
@@ -238,6 +340,9 @@ export function ProfileForm({ tier, defaultValues }: Props) {
               className="flex-1 text-sm"
             />
           </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            If upload fails, set UPLOADTHING_SECRET and UPLOADTHING_APP_ID in your host (e.g. Vercel) or use a direct image URL.
+          </p>
           {backgroundImageUrl && (
             <img
               src={backgroundImageUrl}
@@ -247,7 +352,7 @@ export function ProfileForm({ tier, defaultValues }: Props) {
           )}
         </div>
       )}
-      <Button type="submit" disabled={loading}>
+      <Button type="submit" disabled={saveDisabled}>
         {loading ? "Saving..." : "Save changes"}
       </Button>
     </form>

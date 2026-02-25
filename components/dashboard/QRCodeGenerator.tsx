@@ -12,9 +12,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getVendorPublicUrl, type Tier } from "@/lib/urls";
 
 export interface QRCodeGeneratorProps {
   slug: string;
+  tier: Tier;
   /** Optional base URL (e.g. https://mintalist.com). Falls back to NEXT_PUBLIC_APP_URL or current origin. */
   baseUrl?: string;
 }
@@ -28,9 +30,10 @@ function getMenuBaseUrl(baseUrl?: string): string {
   return "";
 }
 
-export function QRCodeGenerator({ slug, baseUrl }: QRCodeGeneratorProps) {
+export function QRCodeGenerator({ slug, tier, baseUrl }: QRCodeGeneratorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const menuUrl = `${getMenuBaseUrl(baseUrl)}/${slug}`.replace(/\/+/g, "/");
+  const effectiveBase = getMenuBaseUrl(baseUrl);
+  const menuUrl = getVendorPublicUrl(slug, tier, effectiveBase);
 
   const handleDownload = useCallback(() => {
     const container = containerRef.current;

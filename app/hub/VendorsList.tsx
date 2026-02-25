@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useMemo } from "react";
+import { getVendorPublicUrl } from "@/lib/urls";
 
 interface Vendor {
   id: string;
@@ -75,7 +76,7 @@ export function VendorsList({ vendors, baseUrl }: VendorsListProps) {
               </div>
               <div className="mt-4 flex gap-2">
                 <a
-                  href={`${baseUrl}/${v.slug}`}
+                  href={getVendorPublicUrl(v.slug, v.tier, baseUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-emerald-600 hover:underline"

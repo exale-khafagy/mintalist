@@ -42,8 +42,8 @@ Set these in Vercel: **Project → Settings → Environment Variables**. Use **P
 | `CLERK_WEBHOOK_SECRET` | Yes | From Clerk Dashboard → Webhooks → Signing Secret (endpoint: `https://your-domain.com/api/webhooks/clerk`) |
 | `NEXT_PUBLIC_APP_URL` | Yes | The **exact** URL people use to open your app, e.g. `https://www.mintalist.com` or `https://mintalist.com` (no trailing slash). Dashboard “Your public menu” link and QR codes use this. Must match your Vercel domain. |
 | `UPLOADTHING_TOKEN` | Yes | UploadThing token (or use UploadThing’s Vercel env integration) |
-| `UPLOADTHING_SECRET` | Yes | UploadThing secret |
-| `UPLOADTHING_APP_ID` | Yes | UploadThing app ID |
+| `UPLOADTHING_SECRET` | Yes | UploadThing secret (must match the app that defines `logoUploader` and `backgroundImageUploader` in `app/api/uploadthing/core.ts`). "Invalid token" usually means the secret is wrong or missing. |
+| `UPLOADTHING_APP_ID` | Yes | UploadThing app ID (same app as above) |
 | `HUB_ADMIN_EMAILS` | Optional | Comma-separated emails allowed to access `/hub` |
 | `PAYMOB_API_KEY` | For payments | Paymob API key |
 | `PAYMOB_SECRET_KEY` | For payments | Paymob secret key for HMAC verification |

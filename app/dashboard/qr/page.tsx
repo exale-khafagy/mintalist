@@ -1,9 +1,15 @@
 import dynamic from "next/dynamic";
 import { getCurrentVendor } from "@/lib/auth";
 
-const QRCodeGenerator = dynamic(() => import("@/components/dashboard/QRCodeGenerator").then(mod => ({ default: mod.QRCodeGenerator })), {
-  loading: () => <div>Loading QR Code...</div>,
-});
+const QRCodeGenerator = dynamic(
+  () =>
+    import("@/components/dashboard/QRCodeGenerator").then((mod) => ({
+      default: mod.QRCodeGenerator,
+    })),
+  {
+    loading: () => <div>Loading QR Code...</div>,
+  }
+);
 
 export default async function DashboardQRPage() {
   const vendor = await getCurrentVendor();
@@ -17,7 +23,11 @@ export default async function DashboardQRPage() {
           Download this QR code to print and place on tables. Customers scan it to open your digital menu.
         </p>
       </header>
-      <QRCodeGenerator slug={vendor.slug} baseUrl={process.env.NEXT_PUBLIC_APP_URL || "https://mintalist.com"} />
+      <QRCodeGenerator
+        slug={vendor.slug}
+        tier={vendor.tier}
+        baseUrl={process.env.NEXT_PUBLIC_APP_URL || "https://mintalist.com"}
+      />
     </div>
   );
 }

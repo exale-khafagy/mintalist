@@ -5,6 +5,7 @@ const isProtectedRoute = createRouteMatcher([
   "/onboarding(.*)",
   "/dashboard(.*)",
   "/hub(.*)",
+  "/home(.*)",
 ]);
 
 const rawHost = process.env.NEXT_PUBLIC_APP_URL
@@ -57,6 +58,16 @@ export default clerkMiddleware(async (auth, req) => {
     const url = req.nextUrl.clone();
     url.pathname = `/${subdomain}`;
     return NextResponse.rewrite(url);
+  }
+
+  // Signed-in users visiting / get redirected to /home
+  if (pathname === "/" || pathname === "") {
+    const { userId } = await auth();
+    if (userId) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/home";
+      return NextResponse.redirect(url);
+    }
   }
 
   if (!isProtectedRoute(req)) return;
