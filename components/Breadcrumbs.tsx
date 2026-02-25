@@ -1,7 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export function Breadcrumbs() {
+function BreadcrumbsInner() {
   const pathname = usePathname();
   const pathSegments = pathname.split("/").filter(Boolean);
 
@@ -34,4 +36,8 @@ export function Breadcrumbs() {
       </ol>
     </nav>
   );
+}
+
+export function Breadcrumbs() {
+  return <BreadcrumbsInner />;
 }
