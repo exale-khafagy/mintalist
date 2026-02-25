@@ -13,6 +13,7 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  Sparkles,
 } from "lucide-react";
 
 const nav = [
@@ -22,6 +23,7 @@ const nav = [
   { href: "/dashboard/links", label: "Links", icon: Link2 },
   { href: "/dashboard/location", label: "Location", icon: MapPin },
   { href: "/dashboard/qr", label: "QR Code", icon: QrCode },
+  { href: "/dashboard/checkout", label: "Get Gold", icon: Sparkles },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ] as const;
 

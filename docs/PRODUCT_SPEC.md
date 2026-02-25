@@ -55,11 +55,7 @@ Access: either **mintalist.com/[slug]** or **vendor.mintalist.com** (Tier 2).
 - **Tier 1:** Custom slug, background image, no ads.
 - **Tier 2:** Everything in Tier 1 + dedicated subdomain (vendor.mintalist.com).
 
-**Payment (two types):**
-1. **Voucher code** — You give vendors a code offline; they enter it in **Dashboard → Settings**. Their account is upgraded to the tier tied to that voucher (no checkout).
-2. **Paymob** — Vendors go to **Dashboard → Checkout**, choose Tier 1 or Tier 2, and pay via Paymob. On success, their tier is upgraded.
-
-See **docs/PROJECT_PLAN.md** for dashboard structure, voucher/Paymob flows, and phased implementation.
+**Upgrades (no payment in the app):** Users sign up for free. There is no payment in the app. When a vendor wants Gold, they pay you directly (e.g. bank transfer, cash). You or your team generate a **promo code**, send it to them, and they **redeem it in Dashboard → Settings**. That’s the only upgrade path. See **docs/PROJECT_PLAN.md** for dashboard structure and phased implementation.
 
 ---
 
@@ -81,7 +77,7 @@ Goal: **$0 fixed cost; pay only when you have revenue or exceed free limits.**
 | **Neon** | Postgres | Free tier; scale only when needed. |
 | **Clerk** | Auth | Free tier (e.g. 10k MAU). |
 | **UploadThing** | Logo/images | Free tier. |
-| **Paymob** | Payments | You pay Paymob per transaction; no payment flow cost if using vouchers only. |
+| *(none)* | Payments | No payment in the app; you collect money directly and send promo codes. |
 | **Domain** | mintalist.com | Already paid. |
 | **Subdomains** | vendor.mintalist.com | Wildcard DNS `*.mintalist.com` → same app; no extra cost. |
 
@@ -105,8 +101,8 @@ Goal: **$0 fixed cost; pay only when you have revenue or exceed free limits.**
 3. **Phase 3 — Voucher redemption**  
    - Voucher model and redeem API; Settings page: “Redeem voucher” → upgrade tier.
 
-4. **Phase 4 — Paymob checkout**  
-   - Checkout page, Paymob integration, callback to set tier to PAID_1 or PAID_2.
+4. **Phase 4 — Get Gold page**  
+   - Page that explains: no payment in app; pay us directly, we send a code; redeem in Settings. (No payment gateway.)
 
 5. **Phase 5 — Tier enforcement and subdomains (Tier 2)**  
    - DNS: `*.mintalist.com` → app; read Host and serve vendor page at vendor.mintalist.com. Enforce tier features (background image, ads).

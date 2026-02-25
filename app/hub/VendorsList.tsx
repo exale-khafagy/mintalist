@@ -8,7 +8,7 @@ interface Vendor {
   id: string;
   name: string;
   slug: string;
-  tier: "FREE" | "PAID_1" | "PAID_2";
+  tier: "FREE" | "PAID_1";
   _count: { menuItems: number };
 }
 
@@ -19,7 +19,7 @@ interface VendorsListProps {
 
 export function VendorsList({ vendors, baseUrl }: VendorsListProps) {
   const [search, setSearch] = useState("");
-  const [tierFilter, setTierFilter] = useState<"ALL" | "FREE" | "PAID_1" | "PAID_2">("ALL");
+  const [tierFilter, setTierFilter] = useState<"ALL" | "FREE" | "PAID_1">("ALL");
 
   const filteredVendors = useMemo(() => {
     return vendors.filter((v) => {
@@ -49,7 +49,6 @@ export function VendorsList({ vendors, baseUrl }: VendorsListProps) {
           <option value="ALL">All Tiers</option>
           <option value="FREE">Free</option>
           <option value="PAID_1">Gold</option>
-          <option value="PAID_2">Platinum</option>
         </select>
       </div>
 
@@ -76,7 +75,7 @@ export function VendorsList({ vendors, baseUrl }: VendorsListProps) {
               </div>
               <div className="mt-4 flex gap-2">
                 <a
-                  href={getVendorPublicUrl(v.slug, v.tier, baseUrl)}
+                  href={getVendorPublicUrl(v.slug, baseUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-emerald-600 hover:underline"

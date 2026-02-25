@@ -13,7 +13,6 @@ Clone: `git clone https://github.com/exale-khafagy/mintalist.git`
 - **Clerk**: production keys from [Clerk Dashboard](https://dashboard.clerk.com).
 - **Neon**: production Postgres (or reuse existing `DATABASE_URL`).
 - **UploadThing**: already project-linked; use same app or create a production app.
-- **Paymob** (optional for payments): API key and integration ID from Paymob dashboard.
 
 ---
 
@@ -45,13 +44,6 @@ Set these in Vercel: **Project → Settings → Environment Variables**. Use **P
 | `UPLOADTHING_SECRET` | Yes | UploadThing secret (must match the app that defines `logoUploader` and `backgroundImageUploader` in `app/api/uploadthing/core.ts`). "Invalid token" usually means the secret is wrong or missing. |
 | `UPLOADTHING_APP_ID` | Yes | UploadThing app ID (same app as above) |
 | `HUB_ADMIN_EMAILS` | Optional | Comma-separated emails allowed to access `/hub` |
-| `PAYMOB_API_KEY` | For payments | Paymob API key |
-| `PAYMOB_SECRET_KEY` | For payments | Paymob secret key for HMAC verification |
-| `PAYMOB_INTEGRATION_ID` | For payments | Paymob card integration ID |
-| `PAYMOB_PUBLIC_KEY` | For payments | Paymob public key for client-side operations |
-| `PAYMOB_IFRAME_ID` | Optional | Paymob iframe ID for hosted checkout |
-| `PAYMOB_HMAC_SECRET` | Recommended | Verify redirect callbacks (from Paymob dashboard) |
-| `PAYMOB_USERNAME` / `PAYMOB_PASSWORD` | Optional | If Paymob auth uses username/password instead of API key |
 
 **Hub access:** To open `/hub` as an admin (e.g. founder), set `HUB_ADMIN_EMAILS=khafagy.ahmedibrahim@gmail.com` (or your email) in Vercel. Sign in with that email, then go to `https://your-domain.com/hub`. See [HUB_SETUP.md](./HUB_SETUP.md).
 
@@ -85,32 +77,16 @@ DATABASE_URL="postgresql://..." npx prisma migrate deploy
 
 ---
 
-## 6. Paymob callback (if using payments)
+## 6. Public URLs
 
-In the Paymob dashboard, set the payment **callback / redirect URL** to:
-
-```
-https://your-domain.com/api/checkout/paymob/callback
-```
-
-See `docs/PAYMOB_SETUP.md` for full Paymob env and flow.
+Vendor menus use path-based URLs only (e.g. `mintalist.com/your-shop`). Set `NEXT_PUBLIC_APP_URL` to your app URL (e.g. `https://www.mintalist.com` or `https://mintalist.com`) with no trailing slash.
 
 ---
 
-## 7. Subdomain (Platinum tier)
-
-For custom subdomains (e.g. `vendor.mintalist.com`):
-
-1. In your DNS provider, add a **wildcard** A or CNAME: `*.mintalist.com` → your Vercel host (or CNAME to `cname.vercel-dns.com` if using Vercel DNS).
-2. In Vercel, add the domain `mintalist.com` and ensure `*.mintalist.com` is allowed if needed.
-3. Set `NEXT_PUBLIC_APP_URL=https://mintalist.com` so the app can resolve the main host.
-
----
-
-## 8. After deploy
+## 7. After deploy
 
 - Open `https://your-domain.com` and sign up / sign in to confirm auth.
-- Visit **Dashboard** and **Upgrade** to confirm Paymob redirect if configured.
+- Visit **Dashboard** and redeem a voucher in **Settings** to test upgrades.
 - Optionally run `npx prisma migrate deploy` if you didn’t before.
 
 Build command already runs `prisma generate`; migrations must be run separately (step 4).

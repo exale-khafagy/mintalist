@@ -1,4 +1,3 @@
-import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 
@@ -9,19 +8,6 @@ type Props = {
 };
 
 export const revalidate = 60;
-
-// Use root domain (strip www) so vendor.mintalist.com works when NEXT_PUBLIC_APP_URL is https://www.mintalist.com
-const rawHost = process.env.NEXT_PUBLIC_APP_URL
-  ? new URL(process.env.NEXT_PUBLIC_APP_URL).hostname
-  : "mintalist.com";
-const MAIN_HOST = rawHost.startsWith("www.") ? rawHost.slice(4) : rawHost;
-
-function isSubdomain(host: string): boolean {
-  const normalized = host.startsWith("www.") ? host.slice(4) : host;
-  if (!normalized.endsWith(MAIN_HOST) || normalized === MAIN_HOST) return false;
-  const prefix = normalized.slice(0, -MAIN_HOST.length - 1);
-  return prefix.length > 0 && !prefix.includes(".");
-}
 
 export default async function VendorPublicPage({ params }: Props) {
   const { vendorSlug } = await params;
@@ -40,25 +26,12 @@ export default async function VendorPublicPage({ params }: Props) {
 
   if (!vendor) notFound();
 
-  // Subdomain (e.g. vendor.mintalist.com) is only for PAID_2; guard headers() so page still loads if it fails
-  let isSubdomainRequest = false;
-  try {
-    const headerList = await headers();
-    const host = headerList.get("host") ?? "";
-    isSubdomainRequest = isSubdomain(host);
-  } catch {
-    // headers() can fail in some runtimes; treat as path-based access
-  }
-  if (isSubdomainRequest && vendor.tier !== "PAID_2") {
-    notFound();
-  }
-
   const hasLinks =
     vendor.socialLinks.length > 0 || vendor.customLinks.length > 0;
   const hasLocation =
     vendor.locationName || vendor.address || vendor.phone;
 
-  const isPaid = vendor.tier === "PAID_1" || vendor.tier === "PAID_2";
+  const isPaid = vendor.tier === "PAID_1";
   const showAds = vendor.tier === "FREE";
   const backgroundStyle =
     isPaid && vendor.backgroundImageUrl
@@ -187,7 +160,19 @@ export default async function VendorPublicPage({ params }: Props) {
         </div>
 
         {showAds && (
-          <div className="mx-auto mt-4 max-w-2xl sm:mt-6">
+          <div className="mx-auto mt-4 flex max-w-2xl flex-col items-center gap-3 sm:mt-6 sm:gap-4">
+            <a
+              href="https://exale.net/apply"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full max-w-md rounded-xl border border-border bg-card/95 shadow-sm backdrop-blur-sm transition hover:border-emerald-500 hover:opacity-95"
+            >
+              <img
+                src="/ads.png"
+                alt="Apply with Exale"
+                className="h-auto w-full rounded-xl object-contain"
+              />
+            </a>
             <a
               href="https://mintalist.com"
               target="_blank"

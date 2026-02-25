@@ -27,7 +27,7 @@ export function VoucherRedeem() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error ?? "Failed to redeem voucher.");
+        setError(data.error ?? "We couldn't redeem that code. Please check it and try again.");
         return;
       }
       setSuccess(data.message ?? `You're now on ${data.tier}.`);
@@ -42,7 +42,7 @@ export function VoucherRedeem() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
-      <label className="block text-sm font-medium text-zinc-700">
+      <label className="block text-sm font-medium text-foreground">
         Redeem voucher code
       </label>
       <div className="flex gap-2">

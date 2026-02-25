@@ -32,14 +32,13 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
 
-  // FREE tier: cannot change slug (custom URL is paid); cannot set background image
-  const canEditSlug = vendor.tier === "PAID_1" || vendor.tier === "PAID_2";
+  const canEditSlug = vendor.tier === "PAID_1";
   const canSetBackgroundImage = canEditSlug;
 
   if (body.slug !== undefined && body.slug !== vendor.slug) {
     if (!canEditSlug) {
       return NextResponse.json(
-        { error: "Custom URL is available on Tier 1 or 2. Upgrade to change your slug." },
+        { error: "Custom URL is available on Gold. Upgrade to change your slug." },
         { status: 403 }
       );
     }
@@ -56,7 +55,7 @@ export async function PATCH(req: Request) {
 
   if (body.backgroundImageUrl !== undefined && !canSetBackgroundImage) {
     return NextResponse.json(
-      { error: "Background image is available on Tier 1 or 2." },
+      { error: "Background image is available on Gold." },
       { status: 403 }
     );
   }

@@ -19,14 +19,14 @@ export async function PATCH(req: Request, context: { params: Params }) {
   }
 
   const tier = body.tier;
-  if (!tier || !["FREE", "PAID_1", "PAID_2"].includes(tier)) {
-    return NextResponse.json({ error: "tier must be FREE, PAID_1, or PAID_2" }, { status: 400 });
+  if (!tier || !["FREE", "PAID_1"].includes(tier)) {
+    return NextResponse.json({ error: "Tier must be Silver (FREE) or Gold (PAID_1)." }, { status: 400 });
   }
 
   try {
     await prisma.vendor.update({
       where: { id },
-      data: { tier: tier as "FREE" | "PAID_1" | "PAID_2" },
+      data: { tier: tier as "FREE" | "PAID_1" },
     });
     return NextResponse.json({ ok: true });
   } catch {

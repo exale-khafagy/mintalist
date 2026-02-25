@@ -22,12 +22,6 @@ NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/onboarding
 # Database
 DATABASE_URL=your_postgresql_connection_string
 
-# Paymob Payment Gateway
-PAYMOB_API_KEY=your_paymob_api_key
-PAYMOB_SECRET_KEY=your_paymob_secret_key
-PAYMOB_INTEGRATION_ID=your_paymob_integration_id
-PAYMOB_PUBLIC_KEY=your_paymob_public_key
-
 # App URL
 NEXT_PUBLIC_APP_URL=https://yourdomain.com
 

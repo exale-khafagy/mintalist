@@ -8,14 +8,13 @@ import { Input } from "@/components/ui/input";
 const PRESETS = [
   { label: "Join Free always", tier: "FREE" as const, expiresInDays: undefined },
   { label: "Try Gold 1 month for free", tier: "PAID_1" as const, expiresInDays: 30 },
-  { label: "Try Platinum 2 weeks for free", tier: "PAID_2" as const, expiresInDays: 14 },
 ];
 
 export function HubPromoForm() {
   const router = useRouter();
   const [code, setCode] = useState("");
   const [presetIndex, setPresetIndex] = useState<number>(0);
-  const [tier, setTier] = useState<"FREE" | "PAID_1" | "PAID_2">("FREE");
+  const [tier, setTier] = useState<"FREE" | "PAID_1">("FREE");
   const [expiresInDays, setExpiresInDays] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -88,7 +87,7 @@ export function HubPromoForm() {
       <div>
         <label className="mb-1 block text-sm font-medium">Tier</label>
         <div className="flex flex-wrap gap-4">
-          {(["FREE", "PAID_1", "PAID_2"] as const).map((t) => (
+          {(["FREE", "PAID_1"] as const).map((t) => (
             <label key={t} className="flex items-center gap-2">
               <input
                 type="radio"
@@ -97,7 +96,7 @@ export function HubPromoForm() {
                 onChange={() => setTier(t)}
                 className="h-4 w-4"
               />
-              <span className="text-sm">{t === "FREE" ? "Silver (Free)" : t === "PAID_1" ? "Gold" : "Platinum"}</span>
+              <span className="text-sm">{t === "FREE" ? "Silver (Free)" : "Gold"}</span>
             </label>
           ))}
         </div>

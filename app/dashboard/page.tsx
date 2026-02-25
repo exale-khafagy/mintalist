@@ -15,7 +15,6 @@ import { DashboardTour } from "@/components/DashboardTour";
 const TIER_LABELS: Record<string, string> = {
   FREE: "Silver",
   PAID_1: "Gold",
-  PAID_2: "Platinum",
 };
 
 export default async function DashboardOverviewPage() {
@@ -23,7 +22,7 @@ export default async function DashboardOverviewPage() {
   if (!vendor) return null;
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://mintalist.com";
-  const publicUrl = getVendorPublicUrl(vendor.slug, vendor.tier, baseUrl);
+  const publicUrl = getVendorPublicUrl(vendor.slug, baseUrl);
 
   const hasLogo = !!vendor.logoUrl;
   const hasMenuItems = vendor.menuItems.length > 0;
@@ -45,9 +44,7 @@ export default async function DashboardOverviewPage() {
           className={
             vendor.tier === "FREE"
               ? "rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground"
-              : vendor.tier === "PAID_2"
-                ? "rounded-full bg-emerald-600 px-3 py-1 text-xs font-medium text-white"
-                : "rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-600 dark:text-emerald-400"
+              : "rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-600 dark:text-emerald-400"
           }
         >
           {TIER_LABELS[vendor.tier] ?? vendor.tier}

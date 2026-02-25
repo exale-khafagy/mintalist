@@ -22,7 +22,7 @@ export default async function DashboardLayout({
   if (!vendor) redirect("/onboarding");
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://mintalist.com";
-  const publicUrl = getVendorPublicUrl(vendor.slug, vendor.tier, baseUrl);
+  const publicUrl = getVendorPublicUrl(vendor.slug, baseUrl);
 
   return (
     <div className="flex min-h-screen bg-background">

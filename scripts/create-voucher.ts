@@ -1,8 +1,7 @@
 /**
  * Create a voucher code (for admin use).
  * Run: npx tsx scripts/create-voucher.ts <CODE> <TIER> [expiresInDays]
- * Example: npx tsx scripts/create-voucher.ts SUMMER2025 PAID_1
- * Example: npx tsx scripts/create-voucher.ts PROMO2 PAID_2 30
+ * TIER: PAID_1 (Gold) or FREE (Silver). Example: npx tsx scripts/create-voucher.ts SUMMER2025 PAID_1 30
  */
 import "dotenv/config";
 import { config } from "dotenv";
@@ -21,8 +20,8 @@ if (!code || !tier) {
   process.exit(1);
 }
 
-if (tier !== "PAID_1" && tier !== "PAID_2") {
-  console.error("TIER must be PAID_1 or PAID_2");
+if (tier !== "PAID_1" && tier !== "FREE") {
+  console.error("TIER must be PAID_1 (Gold) or FREE (Silver)");
   process.exit(1);
 }
 
@@ -44,7 +43,7 @@ async function main() {
   const voucher = await prisma.voucher.create({
     data: {
       code,
-      tier: tier as "PAID_1" | "PAID_2",
+      tier: tier as "PAID_1" | "FREE",
       expiresAt,
     },
   });

@@ -10,7 +10,7 @@ const bodySchema = z.object({
 export async function POST(req: Request) {
   const { userId } = await auth();
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Please sign in to redeem a code." }, { status: 401 });
   }
 
   let body: z.infer<typeof bodySchema>;
@@ -70,6 +70,6 @@ export async function POST(req: Request) {
   return NextResponse.json({
     ok: true,
     tier: voucher.tier,
-    message: voucher.tier === "FREE" ? "You're on Silver (Free)." : `You're now on ${voucher.tier}.`,
+    message: voucher.tier === "FREE" ? "You're on Silver (Free)." : "You're now on Gold.",
   });
 }

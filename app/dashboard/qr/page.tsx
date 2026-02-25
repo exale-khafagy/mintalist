@@ -25,7 +25,6 @@ export default async function DashboardQRPage() {
       </header>
       <QRCodeGenerator
         slug={vendor.slug}
-        tier={vendor.tier}
         baseUrl={process.env.NEXT_PUBLIC_APP_URL || "https://mintalist.com"}
       />
     </div>

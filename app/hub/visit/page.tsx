@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 const TIER_OPTIONS = [
   { value: "FREE", label: "Silver (Free)" },
   { value: "PAID_1", label: "Gold" },
-  { value: "PAID_2", label: "Platinum" },
 ] as const;
 
 const STEPS = ["Employee Details", "Vendor Details", "Agreement"];

@@ -9,7 +9,7 @@ interface Vendor {
   id: string;
   name: string;
   slug: string;
-  tier: "FREE" | "PAID_1" | "PAID_2";
+  tier: "FREE" | "PAID_1";
   _count: { menuItems: number; socialLinks: number; customLinks: number };
 }
 
@@ -24,7 +24,7 @@ export function VendorDetail({ vendor, baseUrl }: VendorDetailProps) {
   const [slug, setSlug] = useState(vendor.slug);
   const [showPreview, setShowPreview] = useState(false);
 
-  const publicUrl = getVendorPublicUrl(vendor.slug, vendor.tier, baseUrl);
+  const publicUrl = getVendorPublicUrl(vendor.slug, baseUrl);
 
   const handleSave = async () => {
     // TODO: Implement save logic via API

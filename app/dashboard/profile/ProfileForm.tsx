@@ -8,7 +8,7 @@ import { Copy, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UploadDropzone } from "@/lib/uploadthing";
-import { getMainHost, getVendorPublicUrl, type Tier } from "@/lib/urls";
+import { getVendorPublicUrl, type Tier } from "@/lib/urls";
 
 const BASE_URL =
   typeof process !== "undefined" && process.env.NEXT_PUBLIC_APP_URL
@@ -48,14 +48,14 @@ export function ProfileForm({ tier, defaultValues }: Props) {
   const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
   const slugCheckRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const canEditSlug = tier === "PAID_1" || tier === "PAID_2";
-  const menuLink = getVendorPublicUrl(slug, tier, BASE_URL);
-  const mainHost = getMainHost(BASE_URL);
+  const canEditSlug = tier === "PAID_1";
+  const menuLink = getVendorPublicUrl(slug, BASE_URL);
+  const mainHost = BASE_URL.replace(/^https?:\/\//, "").split("/")[0].replace(/^www\./, "") || "mintalist.com";
 
   const slugUnchanged = slug === defaultValues.slug;
   const slugValid = isSlugValid(slug);
 
-  // Debounced slug availability check when user edits slug (Gold/Platinum only)
+  // Debounced slug availability check when user edits slug (Gold only)
   useEffect(() => {
     if (!canEditSlug) return;
     if (slugUnchanged) {
@@ -146,47 +146,23 @@ export function ProfileForm({ tier, defaultValues }: Props) {
       </div>
       <div>
         <label className="mb-1 block text-sm font-medium">
-          {canEditSlug
-            ? tier === "PAID_2"
-              ? "Menu URL (subdomain)"
-              : "Menu URL"
-            : "Your menu link"}
+          {canEditSlug ? "Menu URL" : "Your menu link"}
         </label>
         {canEditSlug ? (
           <div className="space-y-1">
             <div className="flex items-center gap-2 rounded-md border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
-              {tier === "PAID_2" ? (
-                <>
-                  <span>https://</span>
-                  <Input
-                    value={slug}
-                    onChange={(e) =>
-                      setSlug(
-                        e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-")
-                      )
-                    }
-                    required
-                    className="flex-1 border-0 bg-transparent p-0 text-foreground focus-visible:ring-0"
-                    placeholder="yourcafe"
-                  />
-                  <span>.{mainHost}</span>
-                </>
-              ) : (
-                <>
-                  <span>{mainHost}/</span>
-                  <Input
-                    value={slug}
-                    onChange={(e) =>
-                      setSlug(
-                        e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-")
-                      )
-                    }
-                    required
-                    className="flex-1 border-0 bg-transparent p-0 text-foreground focus-visible:ring-0"
-                    placeholder="my-cafe"
-                  />
-                </>
-              )}
+              <span>{mainHost}/</span>
+              <Input
+                value={slug}
+                onChange={(e) =>
+                  setSlug(
+                    e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-")
+                  )
+                }
+                required
+                className="flex-1 border-0 bg-transparent p-0 text-foreground focus-visible:ring-0"
+                placeholder="my-cafe"
+              />
             </div>
             {!slugUnchanged && (
               <p className="text-xs text-muted-foreground">
@@ -241,9 +217,9 @@ export function ProfileForm({ tier, defaultValues }: Props) {
               </Button>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              Custom URL available on Gold or Platinum.{" "}
+              Custom URL available on Gold.{" "}
               <Link href="/dashboard/checkout" className="text-emerald-600 hover:underline">
-                Upgrade
+                Get Gold (we’ll send you a code)
               </Link>
             </p>
           </>

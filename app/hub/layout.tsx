@@ -57,6 +57,9 @@ export default async function HubLayout({
             <Link href="/hub/visit" className="text-sm font-medium text-zinc-600 hover:text-zinc-900">
               Vendor visit
             </Link>
+            <Link href="/hub/contacts" className="text-sm font-medium text-zinc-600 hover:text-zinc-900">
+              Contacts
+            </Link>
             <Link href="/" className="text-sm text-zinc-600 hover:text-zinc-900">
               Back to app
             </Link>

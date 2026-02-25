@@ -7,9 +7,20 @@ function BreadcrumbsInner() {
   const pathname = usePathname();
   const pathSegments = pathname.split("/").filter(Boolean);
 
+  const labelOverrides: Record<string, string> = {
+    dashboard: "Dashboard",
+    checkout: "Get Gold",
+    hub: "Hub",
+    promo: "Promo codes",
+    visit: "Vendor visit",
+    contacts: "Contacts",
+  };
+
   const breadcrumbs = pathSegments.map((segment, index) => {
     const href = "/" + pathSegments.slice(0, index + 1).join("/");
-    const label = segment.charAt(0).toUpperCase() + segment.slice(1).replace("-", " ");
+    const label =
+      labelOverrides[segment] ??
+      segment.charAt(0).toUpperCase() + segment.slice(1).replace("-", " ");
     return { href, label };
   });
 

@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   try {
     body = bodySchema.parse(await req.json());
   } catch {
-    return NextResponse.json({ error: "Invalid body" }, { status: 400 });
+    return NextResponse.json({ error: "Please check your entries and try again." }, { status: 400 });
   }
 
   let existing = await prisma.vendor.findUnique({
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
         name,
         slug,
         brandColor: body.brandColor ?? "#10B981",
-        tier: "FREE",
+        tier: body.planPreference === "GOLD_1_MONTH" ? "PAID_1" : "FREE",
         logoUrl: body.logoUrl?.trim() || null,
         locationName: body.locationName?.trim() || null,
         address: body.address?.trim() || null,
@@ -60,6 +60,22 @@ export async function POST(req: Request) {
         planPreference: body.planPreference ?? null,
       },
     });
+    if (body.planPreference === "GOLD_1_MONTH") {
+      const user = await currentUser();
+      const vendorEmail =
+        user?.primaryEmailAddress?.emailAddress ??
+        user?.emailAddresses?.[0]?.emailAddress ??
+        "";
+      await prisma.contactRequest.create({
+        data: {
+          vendorId: existing.id,
+          vendorName: existing.name,
+          vendorEmail: vendorEmail || "unknown",
+          vendorPhone: existing.phone ?? null,
+          source: "ONBOARDING_GOLD",
+        },
+      });
+    }
     return NextResponse.json({ ok: true, vendorId: existing.id });
   }
 
@@ -73,7 +89,7 @@ export async function POST(req: Request) {
     latitude?: number | null;
     longitude?: number | null;
     planPreference?: string | null;
-    tier?: "FREE" | "PAID_1" | "PAID_2";
+    tier?: "FREE" | "PAID_1";
   } = {};
   if (body.name !== undefined) updateData.name = body.name.trim();
   if (body.brandColor !== undefined) updateData.brandColor = body.brandColor;
@@ -85,15 +101,30 @@ export async function POST(req: Request) {
   if (body.longitude !== undefined) updateData.longitude = body.longitude ?? null;
   if (body.planPreference !== undefined) {
     updateData.planPreference = body.planPreference ?? null;
-    // Apply tier when they chose a trial: Gold 1 month → PAID_1, Platinum 2 weeks → PAID_2
     if (body.planPreference === "GOLD_1_MONTH") updateData.tier = "PAID_1";
-    else if (body.planPreference === "PLATINUM_2_WEEKS") updateData.tier = "PAID_2";
   }
 
-  await prisma.vendor.update({
+  const updated = await prisma.vendor.update({
     where: { clerkUserId: userId },
     data: updateData,
   });
+
+  if (body.planPreference === "GOLD_1_MONTH" && updated) {
+    const user = await currentUser();
+    const vendorEmail =
+      user?.primaryEmailAddress?.emailAddress ??
+      user?.emailAddresses?.[0]?.emailAddress ??
+      "";
+    await prisma.contactRequest.create({
+      data: {
+        vendorId: updated.id,
+        vendorName: updated.name,
+        vendorEmail: vendorEmail || "unknown",
+        vendorPhone: updated.phone ?? null,
+        source: "ONBOARDING_GOLD",
+      },
+    });
+  }
 
   return NextResponse.json({ ok: true });
 }

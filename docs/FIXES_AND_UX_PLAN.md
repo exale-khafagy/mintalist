@@ -23,7 +23,7 @@ This document plans the fixes and features requested: onboarding step 1 = busine
 - **Files:** `app/onboarding/page.tsx`
   - Update `STEPS` to 4 items: “Your business name and location”, “Logo”, “Links”, “Choose your plan”.
   - Step state 1–4; remove `menuFocus` from schema and form; current “step 2” content becomes step 1; current step 3 → step 2, 4 → 3, 5 → 4.
-  - `handleNext`: step 1 saves business details (current saveStep2), step 2 saves logo (current saveStep3), step 3 saves links (current saveStep4), step 4 handles plan (Silver → dashboard, Gold/Platinum → Paymob).
+  - `handleNext`: step 1 saves business details (current saveStep2), step 2 saves logo (current saveStep3), step 3 saves links (current saveStep4), step 4 handles plan (Silver → dashboard, Gold → we send promo code, redeem in Settings).
   - Progress indicator: “Step X of 4”.
 
 ---
@@ -92,20 +92,20 @@ This document plans the fixes and features requested: onboarding step 1 = busine
 
 ## 5. Upgrade or cancel subscription
 
-**Current behavior:** Settings shows current plan; FREE users get “Upgrade with Paymob”. Checkout page allows choosing Gold/Platinum and paying. No explicit “cancel subscription” flow.
+**Current behavior:** Settings shows current plan; FREE users get “link to Get Gold (we send a promo code after you pay us directly)”. Checkout page allows choosing Gold/Platinum and paying. No explicit “cancel subscription” flow.
 
 **Required change:** (1) Keep upgrade path clear. (2) Add ability to “cancel” (downgrade to Silver/FREE).
 
 **Implementation:**
 
-- **Upgrade:** Already present (Settings → Upgrade with Paymob; Checkout → Gold/Platinum). Optional: add a clear “Upgrade plan” card on Settings and/or Overview.
+- **Upgrade:** Already present (Settings → link to Get Gold (we send a promo code after you pay us directly); Get Gold page). Optional: add a clear “Upgrade plan” card on Settings and/or Overview.
 
 - **Cancel / downgrade:**
-  - We do not have Paymob subscription webhooks; “cancel” = **downgrade to FREE** in our DB (no recurring billing to cancel in Paymob for now).
+  - We do not have payment provider; “cancel” = **downgrade to FREE** in our DB (no recurring billing to cancel to cancel).
   - Add in Settings (for Gold/Platinum): a “Downgrade to Silver” (or “Cancel subscription”) action:
     - Explains: “You’ll keep your data but lose custom URL, background image, subdomain (if Platinum), and go back to ads.”
     - Button “Downgrade to Silver” → confirm dialog → call a new API e.g. `PATCH /api/vendor/subscription` or `POST /api/vendor/downgrade` that sets `Vendor.tier = "FREE"`.
-  - Do not change Paymob payment records; only update `Vendor.tier`. If later you add real recurring billing, cancel would be “request downgrade at end of billing period” or similar.
+  - Only update `Vendor.tier`; no payment records. If later you add real recurring billing, cancel would be “request downgrade at end of billing period” or similar.
 
 - **Files:** `app/dashboard/settings/page.tsx` (add downgrade section for paid tiers), new `app/api/vendor/downgrade/route.ts` (or extend profile/settings API) to set tier to FREE when user confirms.
 

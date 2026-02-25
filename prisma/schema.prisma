@@ -12,7 +12,6 @@ datasource db {
 enum Tier {
   FREE
   PAID_1
-  PAID_2
 }
 
 model Vendor {
@@ -29,7 +28,7 @@ model Vendor {
   locationName          String?
   latitude              Float?   // From browser geolocation (no API)
   longitude             Float?
-  planPreference        String?  // FREE_ALWAYS | GOLD_1_MONTH | PLATINUM_2_WEEKS (onboarding choice)
+  planPreference        String?  // FREE_ALWAYS | GOLD_1_MONTH (onboarding choice)
 
   menuItems       MenuItem[]
   socialLinks     VendorSocialLink[]
@@ -117,17 +116,31 @@ model Payment {
   vendorId            String
   vendor              Vendor         @relation(fields: [vendorId], references: [id])
   tier                Tier
-  billingPeriod       BillingPeriod? // See lib/paymob.ts for current pricing (Gold vs Platinum, monthly vs annual)
+  billingPeriod       BillingPeriod?
   amountCents         Int
   currency            String         @default("EGP")
   status              PaymentStatus  @default(PENDING)
-  paymobOrderId       String?        @unique
+  paymobOrderId       String?        @unique // Reserved for future payment provider
   paymobTransactionId String?
 
   createdAt DateTime @default(now())
 
   @@index([vendorId])
   @@index([paymobOrderId])
+}
+
+// Gold signup / upgrade contact request — Hub is notified to contact the vendor
+model ContactRequest {
+  id           String   @id @default(cuid())
+  vendorId     String
+  vendorName   String
+  vendorEmail  String
+  vendorPhone  String?
+  source       String   // ONBOARDING_GOLD | UPGRADE_CLICK
+  createdAt    DateTime @default(now())
+
+  @@index([vendorId])
+  @@index([createdAt])
 }
 
 // Employee vendor visit / lead — filled when staff close a deal on the ground
@@ -143,7 +156,7 @@ model VendorVisit {
   contactEmail    String?
   address         String?
   locationName    String?  // e.g. "Downtown branch"
-  agreedTier      Tier     // Silver (FREE), Gold (PAID_1), Platinum (PAID_2)
+  agreedTier      Tier     // Silver (FREE), Gold (PAID_1)
   visitDate       DateTime @default(now())
   notes           String?  // Free text from the visit
   status          String   @default("PENDING") // PENDING | CONTACTED | ONBOARDED

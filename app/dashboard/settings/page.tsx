@@ -11,12 +11,7 @@ export default async function DashboardSettingsPage() {
   const vendor = await getCurrentVendor();
   if (!vendor) return null;
 
-  const tierLabel =
-    vendor.tier === "FREE"
-      ? "Silver"
-      : vendor.tier === "PAID_1"
-        ? "Gold"
-        : "Platinum";
+  const tierLabel = vendor.tier === "FREE" ? "Silver" : "Gold";
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">

@@ -78,7 +78,7 @@ const onboardingSchema = z.object({
   // Step 3: Links (JSON string for form)
   socialLinks: z.string().optional(),
   customLinks: z.string().optional(),
-  // Step 4: Plan preference (no Paymob; team sends promo code)
+  // Step 4: Plan preference (team sends promo code)
   planPreference: z.enum(["FREE_ALWAYS", "GOLD_1_MONTH", "PLATINUM_2_WEEKS"]).optional(),
 });
 
@@ -223,7 +223,7 @@ export default function OnboardingPage() {
       }
       return;
     }
-    // Step 4: Plan preference (no Paymob; team will send promo code)
+    // Step 4: Plan preference (team will send promo code)
     if (step === 4) {
       const pref = form.getValues("planPreference") ?? "FREE_ALWAYS";
       setIsSubmitting(true);
@@ -517,7 +517,6 @@ function OnboardingLinksStep({ form }: { form: ReturnType<typeof useForm<Onboard
 const PLAN_PRESETS = [
   { value: "FREE_ALWAYS" as const, label: "Join Free always", description: "Silver plan. Our team may contact you with a promo code for upgrades later." },
   { value: "GOLD_1_MONTH" as const, label: "Try Gold 1 month for free", description: "Gold features for 1 month. We'll send you a promo code and contact you for renewals." },
-  { value: "PLATINUM_2_WEEKS" as const, label: "Try Platinum 2 weeks for free", description: "Platinum features for 2 weeks. We'll send you a promo code and contact you for renewals." },
 ];
 
 function OnboardingPlanStep({ form }: { form: ReturnType<typeof useForm<OnboardingValues>> }) {

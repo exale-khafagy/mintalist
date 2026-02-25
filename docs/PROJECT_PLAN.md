@@ -1,6 +1,6 @@
 # Mintalist — Project Plan
 
-This document is the single source of truth for the **business dashboard**, **payment flows** (Voucher + Paymob), **assets**, and **phased implementation**.
+This document is the single source of truth for the **business dashboard**, **upgrades** (promo codes only; no payment in the app), **assets**, and **phased implementation**.
 
 ---
 
@@ -36,8 +36,8 @@ The dashboard is the **single place** where a logged-in vendor manages their pub
 | `/dashboard/links` | Links | **Social links** (Instagram, Facebook, TikTok, X, etc.) and **custom links** (title + URL). Two sub-sections or one list with type. |
 | `/dashboard/location` | Location | Location name, full address, phone number(s). Optional: “Open in Maps” link. |
 | `/dashboard/qr` | QR Code | Existing QRCodeGenerator: show QR, download PNG. |
-| `/dashboard/settings` | Settings | **Voucher redemption** (input + “Redeem”), **subscription/tier** display, and link to **Upgrade / Checkout** (Paymob). |
-| `/dashboard/checkout` | Checkout | Paymob flow: choose Tier 1 or Tier 2, pay via Paymob, then redirect back and activate tier. |
+| `/dashboard/settings` | Settings | **Voucher redemption** (input + “Redeem”), **subscription/tier** display, and link to **Upgrade / Checkout**. |
+| `/dashboard/checkout` | Get Gold | No payment in app; pay us directly, we send a code; redeem in Settings. |
 
 ### 2.2 Dashboard Data (Summary)
 
@@ -45,7 +45,7 @@ The dashboard is the **single place** where a logged-in vendor manages their pub
 - **Menu:** MenuItem (name, description, price, isAvailable) per Vendor.
 - **Links:** Social links (type + URL) and custom links (title + URL); store in DB (e.g. `VendorSocialLink`, `VendorCustomLink` or a single `Link` model with type).
 - **Location:** address, phone, locationName (e.g. “Downtown”) on Vendor or a `VendorLocation` table.
-- **Account:** tier (FREE | PAID_1 | PAID_2), voucher redemption in Settings; Paymob payment from Checkout.
+- **Account:** tier (FREE | PAID_1). No payment in the app—you send promo codes after they pay you directly; they redeem in Settings.
 
 ---
 
@@ -53,37 +53,30 @@ The dashboard is the **single place** where a logged-in vendor manages their pub
 
 ### 3.1 Voucher Code (Offline → Settings)
 
-- **Flow:** You give a vendor a **voucher code** offline (e.g. on paper or WhatsApp). Vendor goes to **Dashboard → Settings**, enters the code in a “Redeem voucher” field, and submits. System validates the code and **upgrades their account** to the tier tied to that voucher (PAID_1 or PAID_2).
+- **Flow:** You give a vendor a **voucher code** offline (e.g. on paper or WhatsApp). Vendor goes to **Dashboard → Settings**, enters the code in a “Redeem voucher” field, and submits. System validates the code and **upgrades their account** to the tier tied to that voucher (PAID_1).
 - **No checkout:** No payment UI; just “Redeem” in settings.
 - **Implementation:**
-  - **DB:** `Voucher` model: `code` (unique), `tier` (PAID_1 | PAID_2), `redeemedAt` (optional), `redeemedByVendorId` (optional). Optional: `expiresAt`.
+  - **DB:** `Voucher` model: `code` (unique), `tier` (PAID_1), `redeemedAt` (optional), `redeemedByVendorId` (optional). Optional: `expiresAt`.
   - **Admin:** You (or a simple admin script) create voucher records (e.g. via Prisma Studio or a small internal tool). No need for a full admin UI in Phase 1.
   - **API:** `POST /api/voucher/redeem` — body: `{ code }`. Auth: current user. Look up voucher by code; if not redeemed and not expired, set `redeemedAt`, `redeemedByVendorId`, and update `Vendor.tier` for the current user’s vendor. Return success/error.
   - **UI:** Settings page: input + “Redeem” button; on success show “You’re now on Tier X” and refresh tier display.
 
-### 3.2 Paymob (Checkout Page)
+### 3.2 Online payment
 
-- **Flow:** Vendor goes to **Dashboard → Upgrade** or **Checkout**. Chooses **Tier 1** or **Tier 2** (and optionally billing period if you support it). Clicks “Pay with Paymob” (or similar). Redirect to Paymob payment page. After successful payment, Paymob redirects back to your **callback URL** (or sends a webhook). Your backend verifies the payment and updates `Vendor.tier` to PAID_1 or PAID_2.
+- **Removed.** Upgrades are via **voucher redemption only** (Settings). Checkout page shows pricing and links to Settings to redeem a code. Clicks “Pay with Paymob” (or similar). Redirect to Paymob payment page. After successful payment, Paymob redirects back to your **callback URL** (or sends a webhook). Your backend verifies the payment and updates `Vendor.tier` to PAID_1 or PAID_2.
 - **Implementation:**
-  - **DB:** Optional `Payment` or `PaymobPayment` record: vendorId, tier, amount, Paymob transaction id, status, createdAt — for history and idempotency.
-  - **Checkout page:** Client: choose tier → call `POST /api/checkout/paymob` (or similar) with `tier`. Server: create Paymob payment request (using Paymob API), return payment URL (or iframe URL) for redirect.
-  - **Callback / Webhook:** Paymob redirects to your URL with success/failure (and possibly HMAC/signature). You verify, then update `Vendor.tier` (and optionally create `Payment`). Redirect user to `/dashboard/settings` with success message.
-  - **Env:** Paymob API credentials in `.env` (e.g. `PAYMOB_API_KEY`, `PAYMOB_INTEGRATION_ID`, `PAYMOB_HMAC_SECRET` for callback verification). No extra infra cost; Paymob is the payment provider.
-
 ---
 
 ## 4. Tiers and Features (Recap)
 
-| Feature | FREE | PAID_1 | PAID_2 |
-|--------|------|--------|--------|
-| Background | Color only | Background image | Background image |
-| Logo | ✅ | ✅ | ✅ |
-| Custom slug | Auto only | mintalist.com/vendor | mintalist.com/vendor |
-| Subdomain | — | — | vendor.mintalist.com |
-| Ads | Shown | No | No |
+| Feature | FREE | PAID_1 |
+|--------|------|--------|
+| Background | Color only | Background image |
+| Logo | ✅ | ✅ |
+| Custom slug | Auto only | mintalist.com/vendor |
+| Ads | Shown | No |
 
-- **Voucher:** Redeem in Settings → tier set to PAID_1 or PAID_2.
-- **Paymob:** Checkout page → pay → callback/webhook → tier set to PAID_1 or PAID_2.
+- **Voucher:** Redeem in Settings → tier set to PAID_1 (Gold).
 
 ---
 
@@ -122,12 +115,10 @@ The dashboard is the **single place** where a logged-in vendor manages their pub
 
 ---
 
-### Phase 4 — Paymob Checkout
-- **Env:** Paymob API key, integration id, HMAC secret, callback URL.
-- **API:** Create payment (Paymob API), return payment URL; callback route to verify and update tier (and optional Payment record).
-- **Dashboard:** “Upgrade” / “Subscribe” entry point in Settings → **Checkout** page (choose Tier 1 or Tier 2, redirect to Paymob, then back to dashboard with success).
-
-**Deliverables:** Vendors can pay via Paymob and be upgraded to PAID_1 or PAID_2; voucher remains for offline upgrades.
+### Phase 4 — Get Gold page (no payment)
+- **No payment in the app.** Get Gold page explains: sign up free; pay us directly; we send a promo code; redeem in Settings.
+- **Dashboard:** Link from Settings/Profile to **Get Gold** page; page shows pricing and redeem in Settings.
+**Deliverables:** Clear copy that there is no payment in the app; upgrades only via promo codes you send after they pay you directly.
 
 ---
 
@@ -163,7 +154,7 @@ The dashboard is the **single place** where a logged-in vendor manages their pub
 | **1** | Foundation | Dashboard shell, Menu, Profile, QR, public [slug], onboarding, assets in layout |
 | **2** | Profile completeness | Links (social + custom), Location (address, phone), public page shows all |
 | **3** | Vouchers | Voucher model, redeem API, Settings “Redeem voucher” UI |
-| **4** | Paymob | Checkout page, Paymob integration, callback, tier upgrade on success |
+| **4** | Get Gold | Get Gold page (no payment); upgrades via promo codes only |
 | **5** | Tiers + subdomains | Tier enforcement, ads for FREE, subdomain for PAID_2 |
 | **6** | Polish | Ads design, background image, overview, UX |
 
@@ -176,4 +167,4 @@ Once `mintalist-symbol` and `mintalist-logo` are in `public/` with their final e
 - **Favicon:** In `app/layout.tsx`: `icons: { icon: '/mintalist-symbol.png' }` (or use `app/icon.png` and replace that file with the symbol).
 - **Logo:** Use `<img src="/mintalist-logo.png" alt="Mintalist" />` in marketing layout and any shared header.
 
-This plan assumes **two payment types only:** (1) **Voucher code** in Settings, (2) **Paymob** on the Checkout page. No Stripe.
+This plan assumes **no payment in the app:** users sign up free; you send promo codes after they pay you directly; they redeem in Settings.

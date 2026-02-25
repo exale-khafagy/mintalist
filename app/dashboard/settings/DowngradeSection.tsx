@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-type Tier = "FREE" | "PAID_1" | "PAID_2";
+type Tier = "FREE" | "PAID_1";
 
 type Props = {
   tier: Tier;
@@ -55,9 +55,6 @@ export function DowngradeSection({ tier }: Props) {
         <ul className="list-inside list-disc text-sm text-muted-foreground">
           <li>Custom URL (you’ll get a new random link, e.g. mintalist.com/xy7k2m9a)</li>
           <li>Background image on your public page</li>
-          {tier === "PAID_2" && (
-            <li>Your subdomain (e.g. yourcafe.mintalist.com)</li>
-          )}
           <li>Ads will appear on your public menu (Powered by Mintalist)</li>
         </ul>
         {!confirming ? (
