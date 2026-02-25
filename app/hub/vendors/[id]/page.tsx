@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
-import { HubVendorForm } from "./HubVendorForm";
+import { VendorDetail } from "./VendorDetail";
 
 export const dynamic = "force-dynamic";
 
@@ -30,29 +30,7 @@ export default async function HubVendorPage({ params }: Props) {
         </Link>
       </div>
 
-      <div className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
-        <h1 className="text-xl font-semibold text-zinc-900">{vendor.name}</h1>
-        <p className="mt-1 font-mono text-sm text-zinc-500">mintalist.com/{vendor.slug}</p>
-        <a
-          href={`${baseUrl}/${vendor.slug}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-2 inline-block text-sm text-emerald-600 hover:underline"
-        >
-          Open public page →
-        </a>
-
-        <dl className="mt-6 grid grid-cols-2 gap-2 text-sm">
-          <dt className="text-zinc-500">Menu items</dt>
-          <dd className="font-medium">{vendor._count.menuItems}</dd>
-          <dt className="text-zinc-500">Social links</dt>
-          <dd className="font-medium">{vendor._count.socialLinks}</dd>
-          <dt className="text-zinc-500">Custom links</dt>
-          <dd className="font-medium">{vendor._count.customLinks}</dd>
-        </dl>
-
-        <HubVendorForm vendorId={vendor.id} currentTier={vendor.tier} />
-      </div>
+      <VendorDetail vendor={vendor} baseUrl={baseUrl} />
     </div>
   );
 }

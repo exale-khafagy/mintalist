@@ -16,14 +16,11 @@ import {
   X,
 } from "lucide-react";
 
-const MAIN_LINKS = [
+const ALL_LINKS = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/dashboard/menu", label: "Menu", icon: UtensilsCrossed },
   { href: "/dashboard/profile", label: "Profile", icon: User },
   { href: "/dashboard/links", label: "Links", icon: Link2 },
-] as const;
-
-const MORE_LINKS = [
   { href: "/dashboard/location", label: "Location", icon: MapPin },
   { href: "/dashboard/qr", label: "QR Code", icon: QrCode },
   { href: "/dashboard/checkout", label: "Upgrade", icon: CreditCard },
@@ -32,7 +29,7 @@ const MORE_LINKS = [
 
 export function DashboardMobileNav() {
   const pathname = usePathname();
-  const [moreOpen, setMoreOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   function isActive(href: string) {
     if (href === "/dashboard") return pathname === "/dashboard";
@@ -41,57 +38,42 @@ export function DashboardMobileNav() {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-20 flex border-t border-border bg-card pb-[env(safe-area-inset-bottom)] pt-2 md:hidden">
-        {MAIN_LINKS.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-xs ${
-              isActive(href) ? "text-emerald-600" : "text-muted-foreground"
-            }`}
-          >
-            <Icon className="h-5 w-5" />
-            <span>{label}</span>
-          </Link>
-        ))}
-        <button
-          type="button"
-          onClick={() => setMoreOpen(true)}
-          className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-xs ${
-            MORE_LINKS.some((l) => isActive(l.href)) ? "text-emerald-600" : "text-muted-foreground"
-          }`}
-        >
-          <Menu className="h-5 w-5" />
-          <span>More</span>
-        </button>
-      </nav>
+      {/* Hamburger button */}
+      <button
+        type="button"
+        onClick={() => setMenuOpen(true)}
+        className="fixed bottom-4 right-4 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg md:hidden"
+        aria-label="Open menu"
+      >
+        <Menu className="h-6 w-6" />
+      </button>
 
-      {/* More drawer overlay */}
-      {moreOpen && (
+      {/* Full slide-out menu */}
+      {menuOpen && (
         <>
           <div
             className="fixed inset-0 z-30 bg-black/50 md:hidden"
-            onClick={() => setMoreOpen(false)}
+            onClick={() => setMenuOpen(false)}
             aria-hidden
           />
-          <div className="fixed bottom-0 left-0 right-0 z-40 max-h-[70vh] overflow-auto rounded-t-2xl border-t border-border bg-card pb-[env(safe-area-inset-bottom)] md:hidden">
+          <div className="fixed bottom-0 left-0 right-0 top-0 z-40 flex flex-col bg-card md:hidden">
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
-              <span className="font-medium text-foreground">More</span>
+              <span className="font-medium text-foreground">Menu</span>
               <button
                 type="button"
-                onClick={() => setMoreOpen(false)}
+                onClick={() => setMenuOpen(false)}
                 className="rounded-lg p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                aria-label="Close"
+                aria-label="Close menu"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
             <div className="flex flex-col p-2">
-              {MORE_LINKS.map(({ href, label, icon: Icon }) => (
+              {ALL_LINKS.map(({ href, label, icon: Icon }) => (
                 <Link
                   key={href}
                   href={href}
-                  onClick={() => setMoreOpen(false)}
+                  onClick={() => setMenuOpen(false)}
                   className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium ${
                     isActive(href)
                       ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { isHubAdmin } from "@/lib/hub-auth";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 export default async function HubLayout({
   children,
@@ -35,7 +36,10 @@ export default async function HubLayout({
           </nav>
         </div>
       </header>
-      <main className="flex-1 p-6">{children}</main>
+      <main className="flex-1 p-6">
+        <Breadcrumbs />
+        {children}
+      </main>
     </div>
   );
 }

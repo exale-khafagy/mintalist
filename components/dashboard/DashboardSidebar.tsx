@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import {
   LayoutDashboard,
   UtensilsCrossed,
@@ -11,6 +12,8 @@ import {
   QrCode,
   CreditCard,
   Settings,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 const nav = [
@@ -26,6 +29,7 @@ const nav = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const [collapsed, setCollapsed] = useState(false);
 
   function isActive(href: string) {
     if (href === "/dashboard") return pathname === "/dashboard";
@@ -34,13 +38,22 @@ export function DashboardSidebar() {
 
   return (
     <>
-      <div className="flex h-16 items-center gap-2 border-b border-border px-4">
+      <div className="flex h-16 items-center justify-between border-b border-border px-4">
         <Link
           href="/dashboard"
-          className="font-semibold tracking-tight text-foreground transition hover:text-emerald-600 dark:hover:text-emerald-400"
+          className={`font-semibold tracking-tight text-foreground transition hover:text-emerald-600 dark:hover:text-emerald-400 ${
+            collapsed ? "hidden" : ""
+          }`}
         >
           Mintalist
         </Link>
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="rounded-lg p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        </button>
       </div>
       <nav className="flex flex-col gap-0.5 p-2">
         {nav.map(({ href, label, icon: Icon }) => {
@@ -53,10 +66,11 @@ export function DashboardSidebar() {
                 active
                   ? "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400"
                   : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              }`}
+              } ${collapsed ? "justify-center" : ""}`}
+              title={collapsed ? label : undefined}
             >
               <Icon className={`h-4 w-4 shrink-0 ${active ? "text-emerald-600 dark:text-emerald-400" : ""}`} />
-              {label}
+              {!collapsed && <span>{label}</span>}
             </Link>
           );
         })}
