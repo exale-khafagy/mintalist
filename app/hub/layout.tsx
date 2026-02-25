@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { isHubAdmin } from "@/lib/hub-auth";
@@ -9,8 +8,37 @@ export default async function HubLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const allowed = await isHubAdmin();
-  if (!allowed) redirect("/");
+  let allowed = false;
+  try {
+    allowed = await isHubAdmin();
+  } catch (e) {
+    console.error("Hub isHubAdmin error:", e);
+  }
+
+  if (!allowed) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-100 px-4">
+        <div className="w-full max-w-md rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
+          <h1 className="text-lg font-semibold text-zinc-900">Hub access</h1>
+          <p className="mt-2 text-sm text-zinc-600">
+            You don’t have access to the Hub. Sign in with an account that’s listed in <strong>HUB_ADMIN_EMAILS</strong> (or <strong>HUB_ADMIN_USER_IDS</strong>) in the project’s environment variables.
+          </p>
+          <p className="mt-3 text-xs text-zinc-500">
+            If you’re the owner, add your email in Vercel → Project → Settings → Environment Variables, then redeploy.
+          </p>
+          <div className="mt-6 flex items-center justify-between gap-4">
+            <Link
+              href="/"
+              className="text-sm font-medium text-emerald-600 hover:underline"
+            >
+              ← Back to app
+            </Link>
+            <UserButton afterSignOutUrl="/" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-zinc-100">
