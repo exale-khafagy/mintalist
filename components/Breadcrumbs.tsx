@@ -14,6 +14,7 @@ function BreadcrumbsInner() {
     promo: "Promo codes",
     visit: "Vendor visit",
     contacts: "Contacts",
+    "ad-clicks": "Ad clicks",
   };
 
   const breadcrumbs = pathSegments.map((segment, index) => {

@@ -17,13 +17,17 @@ export async function isHubAdmin(): Promise<boolean> {
 
   const allowedEmails = process.env.HUB_ADMIN_EMAILS;
   if (allowedEmails?.trim()) {
-    const user = await currentUser();
-    const primaryEmail = user?.primaryEmailAddress?.emailAddress;
-    const emails = user?.emailAddresses?.map((e) => e.emailAddress) ?? [];
-    const currentEmail = primaryEmail ?? emails[0];
-    if (currentEmail) {
-      const list = allowedEmails.split(",").map((e) => e.trim().toLowerCase());
-      if (list.includes(currentEmail.toLowerCase())) return true;
+    try {
+      const user = await currentUser();
+      const primaryEmail = user?.primaryEmailAddress?.emailAddress;
+      const emails = user?.emailAddresses?.map((e) => e.emailAddress) ?? [];
+      const currentEmail = primaryEmail ?? emails[0];
+      if (currentEmail) {
+        const list = allowedEmails.split(",").map((e) => e.trim().toLowerCase());
+        if (list.includes(currentEmail.toLowerCase())) return true;
+      }
+    } catch {
+      return false;
     }
   }
 

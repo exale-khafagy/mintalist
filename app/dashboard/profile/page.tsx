@@ -12,9 +12,6 @@ export default async function DashboardProfilePage() {
     <div className="mx-auto max-w-4xl space-y-6">
       <header className="space-y-1">
         <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">Profile</h1>
-        <p className="text-muted-foreground">
-          Business name, URL slug, logo, and brand color. This is what customers see on your public page.
-        </p>
       </header>
 
       <Card>

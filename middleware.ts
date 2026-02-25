@@ -6,6 +6,7 @@ const isProtectedRoute = createRouteMatcher([
   "/dashboard(.*)",
   "/hub(.*)",
   "/home(.*)",
+  "/redirect-after-auth",
 ]);
 
 // Simple in-memory rate limiter

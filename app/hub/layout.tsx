@@ -60,6 +60,9 @@ export default async function HubLayout({
             <Link href="/hub/contacts" className="text-sm font-medium text-zinc-600 hover:text-zinc-900">
               Contacts
             </Link>
+            <Link href="/hub/ad-clicks" className="text-sm font-medium text-zinc-600 hover:text-zinc-900">
+              Ad clicks
+            </Link>
             <Link href="/" className="text-sm text-zinc-600 hover:text-zinc-900">
               Back to app
             </Link>

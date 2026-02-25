@@ -61,20 +61,24 @@ export async function POST(req: Request) {
       },
     });
     if (body.planPreference === "GOLD_1_MONTH") {
-      const user = await currentUser();
-      const vendorEmail =
-        user?.primaryEmailAddress?.emailAddress ??
-        user?.emailAddresses?.[0]?.emailAddress ??
-        "";
-      await prisma.contactRequest.create({
-        data: {
-          vendorId: existing.id,
-          vendorName: existing.name,
-          vendorEmail: vendorEmail || "unknown",
-          vendorPhone: existing.phone ?? null,
-          source: "ONBOARDING_GOLD",
-        },
-      });
+      try {
+        const user = await currentUser();
+        const vendorEmail =
+          user?.primaryEmailAddress?.emailAddress ??
+          user?.emailAddresses?.[0]?.emailAddress ??
+          "";
+        await prisma.contactRequest.create({
+          data: {
+            vendorId: existing.id,
+            vendorName: existing.name,
+            vendorEmail: vendorEmail || "unknown",
+            vendorPhone: existing.phone ?? null,
+            source: "ONBOARDING_GOLD",
+          },
+        });
+      } catch (_) {
+        // ContactRequest table may not exist yet; onboarding still succeeds
+      }
     }
     return NextResponse.json({ ok: true, vendorId: existing.id });
   }
@@ -110,20 +114,24 @@ export async function POST(req: Request) {
   });
 
   if (body.planPreference === "GOLD_1_MONTH" && updated) {
-    const user = await currentUser();
-    const vendorEmail =
-      user?.primaryEmailAddress?.emailAddress ??
-      user?.emailAddresses?.[0]?.emailAddress ??
-      "";
-    await prisma.contactRequest.create({
-      data: {
-        vendorId: updated.id,
-        vendorName: updated.name,
-        vendorEmail: vendorEmail || "unknown",
-        vendorPhone: updated.phone ?? null,
-        source: "ONBOARDING_GOLD",
-      },
-    });
+    try {
+      const user = await currentUser();
+      const vendorEmail =
+        user?.primaryEmailAddress?.emailAddress ??
+        user?.emailAddresses?.[0]?.emailAddress ??
+        "";
+      await prisma.contactRequest.create({
+        data: {
+          vendorId: updated.id,
+          vendorName: updated.name,
+          vendorEmail: vendorEmail || "unknown",
+          vendorPhone: updated.phone ?? null,
+          source: "ONBOARDING_GOLD",
+        },
+      });
+    } catch (_) {
+      // ContactRequest table may not exist yet; onboarding still succeeds
+    }
   }
 
   return NextResponse.json({ ok: true });

@@ -5,6 +5,7 @@ import { ExternalLink } from "lucide-react";
 
 import { getCurrentVendor } from "@/lib/auth";
 import { getVendorPublicUrl } from "@/lib/urls";
+import { isHubAdmin } from "@/lib/hub-auth";
 import { DashboardMobileNav } from "@/components/dashboard/DashboardMobileNav";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -17,6 +18,9 @@ export default async function DashboardLayout({
 }) {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
+
+  const hubAdmin = await isHubAdmin();
+  if (hubAdmin) redirect("/hub");
 
   const vendor = await getCurrentVendor();
   if (!vendor) redirect("/onboarding");

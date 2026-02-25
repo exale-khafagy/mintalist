@@ -34,6 +34,7 @@ model Vendor {
   socialLinks     VendorSocialLink[]
   customLinks     VendorCustomLink[]
   payments        Payment[]
+  adClicks        AdClick[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -138,6 +139,17 @@ model ContactRequest {
   vendorPhone  String?
   source       String   // ONBOARDING_GOLD | UPGRADE_CLICK
   createdAt    DateTime @default(now())
+
+  @@index([vendorId])
+  @@index([createdAt])
+}
+
+// Ad click on Silver vendor page — link to exale.net/apply; Hub is notified
+model AdClick {
+  id        String   @id @default(cuid())
+  vendorId  String
+  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
   @@index([vendorId])
   @@index([createdAt])

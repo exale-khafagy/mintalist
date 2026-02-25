@@ -44,7 +44,7 @@ export default async function DashboardSettingsPage() {
         </CardContent>
       </Card>
 
-      <DowngradeSection tier={vendor.tier} />
+      {vendor.tier === "PAID_1" && <DowngradeSection tier={vendor.tier} />}
 
       <Card>
         <CardHeader>

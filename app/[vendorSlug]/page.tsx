@@ -162,7 +162,7 @@ export default async function VendorPublicPage({ params }: Props) {
         {showAds && (
           <div className="mx-auto mt-4 flex max-w-2xl flex-col items-center gap-3 sm:mt-6 sm:gap-4">
             <a
-              href="https://exale.net/apply"
+              href={`/api/redirect/apply?slug=${encodeURIComponent(vendor.slug)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full max-w-md rounded-xl border border-border bg-card/95 shadow-sm backdrop-blur-sm transition hover:border-emerald-500 hover:opacity-95"

@@ -14,9 +14,14 @@ export default async function HubContactsPage() {
     );
   }
 
-  const requests = await prisma.contactRequest.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  let requests: { id: string; vendorId: string; vendorName: string; vendorEmail: string; vendorPhone: string | null; source: string; createdAt: Date }[] = [];
+  try {
+    requests = await prisma.contactRequest.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+  } catch {
+    // ContactRequest table may not exist yet
+  }
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
