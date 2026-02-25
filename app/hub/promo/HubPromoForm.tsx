@@ -5,14 +5,28 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+const PRESETS = [
+  { label: "Join Free always", tier: "FREE" as const, expiresInDays: undefined },
+  { label: "Try Gold 1 month for free", tier: "PAID_1" as const, expiresInDays: 30 },
+  { label: "Try Platinum 2 weeks for free", tier: "PAID_2" as const, expiresInDays: 14 },
+];
+
 export function HubPromoForm() {
   const router = useRouter();
   const [code, setCode] = useState("");
-  const [tier, setTier] = useState<"PAID_1" | "PAID_2">("PAID_1");
+  const [presetIndex, setPresetIndex] = useState<number>(0);
+  const [tier, setTier] = useState<"FREE" | "PAID_1" | "PAID_2">("FREE");
   const [expiresInDays, setExpiresInDays] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  function applyPreset(index: number) {
+    setPresetIndex(index);
+    const p = PRESETS[index]!;
+    setTier(p.tier);
+    setExpiresInDays(p.expiresInDays != null ? String(p.expiresInDays) : "");
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,7 +51,6 @@ export function HubPromoForm() {
       }
       setSuccess(`Created: ${data.code} → ${data.tier}`);
       setCode("");
-      setExpiresInDays("");
       router.refresh();
     } catch {
       setError("Something went wrong");
@@ -49,42 +62,48 @@ export function HubPromoForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
+        <label className="mb-1 block text-sm font-medium">Preset (optional)</label>
+        <select
+          value={presetIndex}
+          onChange={(e) => applyPreset(Number(e.target.value))}
+          className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+        >
+          {PRESETS.map((p, i) => (
+            <option key={i} value={i}>
+              {p.label}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
         <label className="mb-1 block text-sm font-medium">Code</label>
         <Input
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
-          placeholder="e.g. SUMMER2025"
+          placeholder="e.g. GOLD-JAN2025"
           className="font-mono uppercase"
           disabled={loading}
         />
       </div>
       <div>
         <label className="mb-1 block text-sm font-medium">Tier</label>
-        <div className="flex gap-4">
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              name="tier"
-              checked={tier === "PAID_1"}
-              onChange={() => setTier("PAID_1")}
-              className="h-4 w-4"
-            />
-            <span className="text-sm">PAID_1</span>
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              name="tier"
-              checked={tier === "PAID_2"}
-              onChange={() => setTier("PAID_2")}
-              className="h-4 w-4"
-            />
-            <span className="text-sm">PAID_2</span>
-          </label>
+        <div className="flex flex-wrap gap-4">
+          {(["FREE", "PAID_1", "PAID_2"] as const).map((t) => (
+            <label key={t} className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="tier"
+                checked={tier === t}
+                onChange={() => setTier(t)}
+                className="h-4 w-4"
+              />
+              <span className="text-sm">{t === "FREE" ? "Silver (Free)" : t === "PAID_1" ? "Gold" : "Platinum"}</span>
+            </label>
+          ))}
         </div>
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium">Expires in (days, optional)</label>
+        <label className="mb-1 block text-sm font-medium">Expires in (days, optional — leave empty for no expiry)</label>
         <Input
           type="number"
           min={1}

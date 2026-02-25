@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -29,6 +29,41 @@ const SOCIAL_OPTIONS = [
   { value: "whatsapp", label: "WhatsApp" },
 ] as const;
 
+function GetLocationButton({
+  onSuccess,
+  onError,
+}: {
+  onSuccess: (lat: number, lng: number) => void;
+  onError: (message: string) => void;
+}) {
+  const [loading, setLoading] = useState(false);
+  function handleClick() {
+    if (!navigator.geolocation) {
+      onError("Geolocation is not supported by your browser.");
+      return;
+    }
+    setLoading(true);
+    onError("");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        onSuccess(pos.coords.latitude, pos.coords.longitude);
+        setLoading(false);
+      },
+      (err) => {
+        onError(err.message || "Could not get location.");
+        setLoading(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+    );
+  }
+  return (
+    <Button type="button" variant="outline" size="sm" onClick={handleClick} disabled={loading}>
+      <MapPin className="mr-2 h-4 w-4" />
+      {loading ? "Getting location…" : "Use my current location"}
+    </Button>
+  );
+}
+
 const onboardingSchema = z.object({
   // Step 1: Business name and location
   name: z.string().min(2, "Business name is required"),
@@ -36,14 +71,15 @@ const onboardingSchema = z.object({
   address: z.string().optional(),
   phone: z.string().optional(),
   brandColor: z.string().regex(/^#([0-9a-fA-F]{6})$/, "Invalid color"),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
   // Step 2: Logo
   logoUrl: z.union([z.string().url(), z.literal("")]).optional(),
   // Step 3: Links (JSON string for form)
   socialLinks: z.string().optional(),
   customLinks: z.string().optional(),
-  // Step 4: Plan
-  plan: z.enum(["SILVER", "GOLD", "PLATINUM"]).optional(),
-  billingPeriod: z.enum(["MONTHLY", "ANNUAL"]).optional(),
+  // Step 4: Plan preference (no Paymob; team sends promo code)
+  planPreference: z.enum(["FREE_ALWAYS", "GOLD_1_MONTH", "PLATINUM_2_WEEKS"]).optional(),
 });
 
 type OnboardingValues = z.infer<typeof onboardingSchema>;
@@ -73,8 +109,9 @@ export default function OnboardingPage() {
       logoUrl: "",
       socialLinks: "[]",
       customLinks: "[]",
-      plan: "SILVER",
-      billingPeriod: "MONTHLY",
+      planPreference: "FREE_ALWAYS",
+      latitude: undefined,
+      longitude: undefined,
     },
   });
 
@@ -87,7 +124,7 @@ export default function OnboardingPage() {
   }, [isLoaded, user, router]);
 
   async function saveStep2() {
-    const { name, locationName, address, phone, brandColor } = form.getValues();
+    const { name, locationName, address, phone, brandColor, latitude, longitude } = form.getValues();
     const res = await fetch("/api/vendor/onboarding", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -97,6 +134,8 @@ export default function OnboardingPage() {
         address: address || undefined,
         phone: phone || undefined,
         brandColor: brandColor || undefined,
+        latitude: latitude ?? undefined,
+        longitude: longitude ?? undefined,
       }),
     });
     if (!res.ok) {
@@ -184,37 +223,27 @@ export default function OnboardingPage() {
       }
       return;
     }
-    // Step 4: Plan
+    // Step 4: Plan preference (no Paymob; team will send promo code)
     if (step === 4) {
-      const plan = form.getValues("plan");
-      if (plan === "SILVER") {
-        router.push("/dashboard");
-        return;
-      }
-      if (plan === "GOLD" || plan === "PLATINUM") {
-        setIsSubmitting(true);
-        try {
-          const tier = plan === "GOLD" ? "PAID_1" : "PAID_2";
-          const period = form.getValues("billingPeriod") ?? "MONTHLY";
-          const res = await fetch("/api/checkout/paymob", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ tier, period }),
-          });
+      const pref = form.getValues("planPreference") ?? "FREE_ALWAYS";
+      setIsSubmitting(true);
+      try {
+        const res = await fetch("/api/vendor/onboarding", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ planPreference: pref }),
+        });
+        if (!res.ok) {
           const data = await res.json().catch(() => ({}));
-          if (!res.ok) throw new Error(data.error ?? "Failed to start payment");
-          if (data.redirectUrl) {
-            window.location.href = data.redirectUrl;
-            return;
-          }
-          setError("No redirect URL received");
-        } catch (e) {
-          setError(e instanceof Error ? e.message : "Something went wrong");
-        } finally {
-          setIsSubmitting(false);
+          throw new Error(data.error ?? "Failed to save");
         }
-        return;
+        router.push("/dashboard?onboarding=complete");
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Failed to save");
+      } finally {
+        setIsSubmitting(false);
       }
+      return;
     }
   }
 
@@ -235,7 +264,7 @@ export default function OnboardingPage() {
 
   const current = STEPS[step - 1]!;
   const isLastStep = step === 4;
-  const plan = form.watch("plan");
+  const planPreference = form.watch("planPreference");
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-3 py-4 sm:px-4 sm:py-6">
@@ -293,6 +322,24 @@ export default function OnboardingPage() {
                   placeholder="+20..."
                   className="mt-1"
                 />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-foreground">Your location (optional)</label>
+                <p className="mb-2 text-xs text-muted-foreground">
+                  Use your browser to save your coordinates. No API key required.
+                </p>
+                <GetLocationButton
+                  onSuccess={(lat, lng) => {
+                    form.setValue("latitude", lat, { shouldValidate: false });
+                    form.setValue("longitude", lng, { shouldValidate: false });
+                  }}
+                  onError={(msg) => setError(msg)}
+                />
+                {(form.watch("latitude") != null && form.watch("longitude") != null) && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Saved: {form.watch("latitude")?.toFixed(5)}, {form.watch("longitude")?.toFixed(5)}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="mb-1 block text-sm font-medium text-foreground">Brand color</label>
@@ -367,7 +414,7 @@ export default function OnboardingPage() {
             </Button>
           )}
           <Button onClick={handleNext} disabled={isSubmitting}>
-            {isSubmitting ? "Saving..." : isLastStep && plan === "SILVER" ? "Go to dashboard" : isLastStep && (plan === "GOLD" || plan === "PLATINUM") ? "Continue to payment" : "Next"}{" "}
+            {isSubmitting ? "Saving..." : isLastStep ? "Finish" : "Next"}
             {!isLastStep && <ChevronRight className="h-4 w-4 ml-1" />}
           </Button>
         </CardFooter>
@@ -467,126 +514,38 @@ function OnboardingLinksStep({ form }: { form: ReturnType<typeof useForm<Onboard
   );
 }
 
+const PLAN_PRESETS = [
+  { value: "FREE_ALWAYS" as const, label: "Join Free always", description: "Silver plan. Our team may contact you with a promo code for upgrades later." },
+  { value: "GOLD_1_MONTH" as const, label: "Try Gold 1 month for free", description: "Gold features for 1 month. We'll send you a promo code and contact you for renewals." },
+  { value: "PLATINUM_2_WEEKS" as const, label: "Try Platinum 2 weeks for free", description: "Platinum features for 2 weeks. We'll send you a promo code and contact you for renewals." },
+];
+
 function OnboardingPlanStep({ form }: { form: ReturnType<typeof useForm<OnboardingValues>> }) {
-  const plan = form.watch("plan");
-  const period = form.watch("billingPeriod");
+  const planPreference = form.watch("planPreference");
 
   return (
     <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        Choose an option. Our team will contact you and send a promo code where applicable.
+      </p>
       <div className="grid gap-3">
-        {/* Silver */}
-        <label
-          className={`flex cursor-pointer flex-col rounded-lg border-2 p-4 transition ${plan === "SILVER" ? "border-emerald-600 bg-emerald-500/10 dark:bg-emerald-500/20" : "border-border hover:border-muted-foreground/50"}`}
-        >
-          <input
-            type="radio"
-            name="plan"
-            value="SILVER"
-            checked={plan === "SILVER"}
-            onChange={() => form.setValue("plan", "SILVER")}
-            className="sr-only"
-          />
-          <span className="font-semibold text-foreground">Silver (Free)</span>
-          <ul className="mt-2 list-inside list-disc text-sm text-muted-foreground">
-            <li>Digital menu on one link</li>
-            <li>Random URL (e.g. mintalist.com/xy7k2m9a)</li>
-            <li>QR code for your menu</li>
-            <li>Powered by Mintalist badge</li>
-          </ul>
-        </label>
-
-        {/* Gold */}
-        <label
-          className={`flex cursor-pointer flex-col rounded-lg border-2 p-4 transition ${plan === "GOLD" ? "border-emerald-600 bg-emerald-500/10 dark:bg-emerald-500/20" : "border-border hover:border-muted-foreground/50"}`}
-        >
-          <input
-            type="radio"
-            name="plan"
-            value="GOLD"
-            checked={plan === "GOLD"}
-            onChange={() => form.setValue("plan", "GOLD")}
-            className="sr-only"
-          />
-          <span className="font-semibold text-foreground">Gold</span>
-          <ul className="mt-2 list-inside list-disc text-sm text-muted-foreground">
-            <li>Everything in Silver</li>
-            <li>Custom link (mintalist.com/your-cafe)</li>
-            <li>Background image</li>
-            <li>No ads</li>
-          </ul>
-          {plan === "GOLD" && (
-            <div className="mt-3 flex flex-col gap-1 text-sm text-muted-foreground">
-              <div className="flex flex-wrap items-center gap-2">
-                <input
-                  type="radio"
-                  name="goldPeriod"
-                  checked={period === "MONTHLY"}
-                  onChange={() => form.setValue("billingPeriod", "MONTHLY")}
-                />
-                <span>
-                  100 LE / month – first 4 months 50% off.
-                </span>
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <input
-                  type="radio"
-                  name="goldPeriod"
-                  checked={period === "ANNUAL"}
-                  onChange={() => form.setValue("billingPeriod", "ANNUAL")}
-                />
-                <span>
-                  Annual: 600 LE for the first year, then 1000 LE / year on renewal.
-                </span>
-              </div>
-            </div>
-          )}
-        </label>
-
-        {/* Platinum */}
-        <label
-          className={`flex cursor-pointer flex-col rounded-lg border-2 p-4 transition ${plan === "PLATINUM" ? "border-emerald-600 bg-emerald-500/10 dark:bg-emerald-500/20" : "border-border hover:border-muted-foreground/50"}`}
-        >
-          <input
-            type="radio"
-            name="plan"
-            value="PLATINUM"
-            checked={plan === "PLATINUM"}
-            onChange={() => form.setValue("plan", "PLATINUM")}
-            className="sr-only"
-          />
-          <span className="font-semibold text-foreground">Platinum</span>
-          <ul className="mt-2 list-inside list-disc text-sm text-muted-foreground">
-            <li>Everything in Gold</li>
-            <li>Your subdomain (yourcafe.mintalist.com)</li>
-            <li>Priority support</li>
-          </ul>
-          {plan === "PLATINUM" && (
-            <div className="mt-3 flex flex-col gap-1 text-sm text-muted-foreground">
-              <div className="flex flex-wrap items-center gap-2">
-                <input
-                  type="radio"
-                  name="platinumPeriod"
-                  checked={period === "MONTHLY"}
-                  onChange={() => form.setValue("billingPeriod", "MONTHLY")}
-                />
-                <span>
-                  150 LE / month – first 4 months at 75 LE.
-                </span>
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <input
-                  type="radio"
-                  name="platinumPeriod"
-                  checked={period === "ANNUAL"}
-                  onChange={() => form.setValue("billingPeriod", "ANNUAL")}
-                />
-                <span>
-                  Annual: 900 LE for the first year, then 1500 LE / year on renewal.
-                </span>
-              </div>
-            </div>
-          )}
-        </label>
+        {PLAN_PRESETS.map((preset) => (
+          <label
+            key={preset.value}
+            className={`flex cursor-pointer flex-col rounded-lg border-2 p-4 transition ${planPreference === preset.value ? "border-emerald-600 bg-emerald-500/10 dark:bg-emerald-500/20" : "border-border hover:border-muted-foreground/50"}`}
+          >
+            <input
+              type="radio"
+              name="planPreference"
+              value={preset.value}
+              checked={planPreference === preset.value}
+              onChange={() => form.setValue("planPreference", preset.value)}
+              className="sr-only"
+            />
+            <span className="font-semibold text-foreground">{preset.label}</span>
+            <p className="mt-1 text-sm text-muted-foreground">{preset.description}</p>
+          </label>
+        ))}
       </div>
     </div>
   );

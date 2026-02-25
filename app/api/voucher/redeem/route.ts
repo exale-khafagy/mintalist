@@ -46,13 +46,6 @@ export async function POST(req: Request) {
     );
   }
 
-  if (voucher.tier === "FREE") {
-    return NextResponse.json(
-      { error: "This voucher does not grant an upgrade." },
-      { status: 400 }
-    );
-  }
-
   if (voucher.expiresAt && voucher.expiresAt < new Date()) {
     return NextResponse.json(
       { error: "This voucher has expired." },
@@ -77,6 +70,6 @@ export async function POST(req: Request) {
   return NextResponse.json({
     ok: true,
     tier: voucher.tier,
-    message: `You're now on ${voucher.tier}.`,
+    message: voucher.tier === "FREE" ? "You're on Silver (Free)." : `You're now on ${voucher.tier}.`,
   });
 }

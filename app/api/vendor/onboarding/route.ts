@@ -12,6 +12,9 @@ const bodySchema = z.object({
   locationName: z.string().optional(),
   address: z.string().optional(),
   phone: z.string().optional(),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
+  planPreference: z.enum(["FREE_ALWAYS", "GOLD_1_MONTH", "PLATINUM_2_WEEKS"]).optional(),
 });
 
 export async function POST(req: Request) {
@@ -52,6 +55,9 @@ export async function POST(req: Request) {
         locationName: body.locationName?.trim() || null,
         address: body.address?.trim() || null,
         phone: body.phone?.trim() || null,
+        latitude: body.latitude ?? null,
+        longitude: body.longitude ?? null,
+        planPreference: body.planPreference ?? null,
       },
     });
     return NextResponse.json({ ok: true, vendorId: existing.id });
@@ -64,6 +70,9 @@ export async function POST(req: Request) {
     locationName?: string | null;
     address?: string | null;
     phone?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+    planPreference?: string | null;
   } = {};
   if (body.name !== undefined) updateData.name = body.name.trim();
   if (body.brandColor !== undefined) updateData.brandColor = body.brandColor;
@@ -71,6 +80,9 @@ export async function POST(req: Request) {
   if (body.locationName !== undefined) updateData.locationName = body.locationName?.trim() || null;
   if (body.address !== undefined) updateData.address = body.address?.trim() || null;
   if (body.phone !== undefined) updateData.phone = body.phone?.trim() || null;
+  if (body.latitude !== undefined) updateData.latitude = body.latitude ?? null;
+  if (body.longitude !== undefined) updateData.longitude = body.longitude ?? null;
+  if (body.planPreference !== undefined) updateData.planPreference = body.planPreference ?? null;
 
   await prisma.vendor.update({
     where: { clerkUserId: userId },

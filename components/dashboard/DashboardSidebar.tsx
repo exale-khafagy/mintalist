@@ -10,7 +10,6 @@ import {
   Link2,
   MapPin,
   QrCode,
-  CreditCard,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -23,7 +22,6 @@ const nav = [
   { href: "/dashboard/links", label: "Links", icon: Link2 },
   { href: "/dashboard/location", label: "Location", icon: MapPin },
   { href: "/dashboard/qr", label: "QR Code", icon: QrCode },
-  { href: "/dashboard/checkout", label: "Upgrade", icon: CreditCard },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ] as const;
 

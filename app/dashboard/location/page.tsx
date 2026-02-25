@@ -30,6 +30,8 @@ export default async function DashboardLocationPage() {
               locationName: vendor.locationName ?? "",
               address: vendor.address ?? "",
               phone: vendor.phone ?? "",
+              latitude: vendor.latitude ?? null,
+              longitude: vendor.longitude ?? null,
             }}
           />
         </CardContent>

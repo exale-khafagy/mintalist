@@ -19,9 +19,9 @@ export async function POST(req: Request) {
 
   const code = body.code?.trim().toUpperCase();
   const tier = body.tier;
-  if (!code || !tier || !["PAID_1", "PAID_2"].includes(tier)) {
+  if (!code || !tier || !["FREE", "PAID_1", "PAID_2"].includes(tier)) {
     return NextResponse.json(
-      { error: "code and tier (PAID_1 or PAID_2) required" },
+      { error: "code and tier (FREE, PAID_1, or PAID_2) required" },
       { status: 400 }
     );
   }
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     const voucher = await prisma.voucher.create({
       data: {
         code,
-        tier: tier as "PAID_1" | "PAID_2",
+        tier: tier as "FREE" | "PAID_1" | "PAID_2",
         expiresAt,
       },
     });

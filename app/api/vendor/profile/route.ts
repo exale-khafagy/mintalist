@@ -12,6 +12,8 @@ const updateSchema = z.object({
   address: z.string().optional().or(z.literal("")),
   phone: z.string().optional().or(z.literal("")),
   locationName: z.string().optional().or(z.literal("")),
+  latitude: z.number().min(-90).max(90).optional().nullable(),
+  longitude: z.number().min(-180).max(180).optional().nullable(),
 });
 
 export async function PATCH(req: Request) {
@@ -80,6 +82,8 @@ export async function PATCH(req: Request) {
       ...(body.locationName !== undefined && {
         locationName: body.locationName === "" ? null : body.locationName,
       }),
+      ...(body.latitude !== undefined && { latitude: body.latitude }),
+      ...(body.longitude !== undefined && { longitude: body.longitude }),
     },
   });
   return NextResponse.json(updated);

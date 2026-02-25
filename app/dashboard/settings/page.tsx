@@ -24,7 +24,7 @@ export default async function DashboardSettingsPage() {
       <header className="space-y-1">
         <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">Settings</h1>
         <p className="text-muted-foreground">
-          Your plan, voucher redemption, and Paymob upgrade.
+          Your plan and voucher redemption. Use a promo code from our team to upgrade.
         </p>
       </header>
 
@@ -43,17 +43,9 @@ export default async function DashboardSettingsPage() {
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
             {vendor.tier === "FREE"
-              ? "Redeem a voucher code below or upgrade via Paymob checkout."
-              : "You have an upgraded plan. Manage your subscription or redeem another voucher below if you have one."}
+              ? "Redeem a voucher code below to upgrade. Our team will send you a code when you're ready."
+              : "You have an upgraded plan. Redeem another voucher below if you have one."}
           </p>
-          {vendor.tier === "FREE" && (
-            <Link
-              href="/dashboard/checkout"
-              className="mt-3 inline-block text-sm font-medium text-emerald-600 hover:underline dark:text-emerald-400"
-            >
-              Upgrade with Paymob →
-            </Link>
-          )}
         </CardContent>
       </Card>
 

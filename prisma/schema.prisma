@@ -27,6 +27,9 @@ model Vendor {
   address               String?
   phone                 String?
   locationName          String?
+  latitude              Float?   // From browser geolocation (no API)
+  longitude             Float?
+  planPreference        String?  // FREE_ALWAYS | GOLD_1_MONTH | PLATINUM_2_WEEKS (onboarding choice)
 
   menuItems       MenuItem[]
   socialLinks     VendorSocialLink[]

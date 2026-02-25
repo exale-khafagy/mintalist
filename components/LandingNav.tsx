@@ -85,7 +85,7 @@ export function LandingNav() {
             aria-label="Close menu"
           />
           <div
-            className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col border-l border-border bg-card shadow-xl"
+            className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col border-l border-border bg-white shadow-xl dark:bg-zinc-900"
             style={{ zIndex: 1 }}
           >
             <div className="flex min-h-14 items-center justify-between border-b border-border px-4">

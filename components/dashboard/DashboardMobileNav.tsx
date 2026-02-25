@@ -10,7 +10,6 @@ import {
   Link2,
   MapPin,
   QrCode,
-  CreditCard,
   Settings,
   Menu,
   X,
@@ -23,7 +22,6 @@ const ALL_LINKS = [
   { href: "/dashboard/links", label: "Links", icon: Link2 },
   { href: "/dashboard/location", label: "Location", icon: MapPin },
   { href: "/dashboard/qr", label: "QR Code", icon: QrCode },
-  { href: "/dashboard/checkout", label: "Upgrade", icon: CreditCard },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ] as const;
 
@@ -56,7 +54,7 @@ export function DashboardMobileNav() {
             onClick={() => setMenuOpen(false)}
             aria-hidden
           />
-          <div className="fixed bottom-0 left-0 right-0 top-0 z-40 flex flex-col bg-card md:hidden">
+          <div className="fixed bottom-0 left-0 right-0 top-0 z-40 flex flex-col bg-white dark:bg-zinc-900 md:hidden">
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <span className="font-medium text-foreground">Menu</span>
               <button
