@@ -12,6 +12,25 @@ const rawHost = process.env.NEXT_PUBLIC_APP_URL
   : "mintalist.com";
 const MAIN_HOST = rawHost.startsWith("www.") ? rawHost.slice(4) : rawHost;
 
+// Simple in-memory rate limiter
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT = 10; // requests per window
+const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetTime) {
+    rateLimitMap.set(ip, { count: 1, resetTime: now + WINDOW_MS });
+    return false;
+  }
+  if (entry.count >= RATE_LIMIT) {
+    return true;
+  }
+  entry.count++;
+  return false;
+}
+
 function getSubdomain(host: string): string | null {
   const normalized = host.startsWith("www.") ? host.slice(4) : host;
   if (!normalized.endsWith(MAIN_HOST) || normalized === MAIN_HOST) return null;
@@ -23,6 +42,14 @@ function getSubdomain(host: string): string | null {
 export default clerkMiddleware(async (auth, req) => {
   const host = req.headers.get("host") ?? req.nextUrl.hostname;
   const pathname = req.nextUrl.pathname;
+  const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
+
+  // Rate limiting for API routes
+  if (pathname.startsWith("/api")) {
+    if (isRateLimited(ip)) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+  }
 
   // PAID_2 subdomain: vendor.mintalist.com → serve /[vendorSlug] with slug = "vendor"
   const subdomain = getSubdomain(host);

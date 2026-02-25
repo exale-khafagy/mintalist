@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { PeriodSelector } from "@/components/PeriodSelector";
 
 type Tier = "PAID_1" | "PAID_2";
 type Period = "MONTHLY" | "ANNUAL";
@@ -40,37 +41,17 @@ export function CheckoutForm({ tier }: { tier: Tier }) {
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center space-x-4">
-        <label className="flex items-center">
-          <input
-            type="radio"
-            name={`period-${tier}`}
-            value="MONTHLY"
-            checked={period === "MONTHLY"}
-            onChange={() => setPeriod("MONTHLY")}
-            className="mr-2"
-          />
-          Monthly
-        </label>
-        <label className="flex items-center">
-          <input
-            type="radio"
-            name={`period-${tier}`}
-            value="ANNUAL"
-            checked={period === "ANNUAL"}
-            onChange={() => setPeriod("ANNUAL")}
-            className="mr-2"
-          />
-          Annual
-        </label>
-      </div>
+      <PeriodSelector onChange={setPeriod} defaultPeriod="MONTHLY" />
       {error && (
-        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>
+        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert" aria-live="polite">
+          {error}
+        </p>
       )}
       <Button
         onClick={handlePay}
         disabled={loading}
         className="w-full bg-emerald-600 font-medium hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+        aria-describedby={error ? "error-message" : undefined}
       >
         {loading ? "Redirecting..." : "Pay with Paymob"}
       </Button>

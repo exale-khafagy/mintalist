@@ -2,23 +2,66 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies:
+
+```bash
+npm install
+```
+
+Then, set up environment variables. Create a `.env.local` file with:
+
+```env
+# Clerk Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/onboarding
+
+# Database
+DATABASE_URL=your_postgresql_connection_string
+
+# Paymob Payment Gateway
+PAYMOB_API_KEY=your_paymob_api_key
+PAYMOB_SECRET_KEY=your_paymob_secret_key
+PAYMOB_INTEGRATION_ID=your_paymob_integration_id
+PAYMOB_PUBLIC_KEY=your_paymob_public_key
+
+# App URL
+NEXT_PUBLIC_APP_URL=https://yourdomain.com
+
+# UploadThing (for file uploads)
+UPLOADTHING_SECRET=your_uploadthing_secret
+UPLOADTHING_APP_ID=your_uploadthing_app_id
+```
+
+Run the database setup:
+
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Testing
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Run unit tests:
+
+```bash
+npm test
+```
+
+## Deployment
+
+See `docs/DEPLOY.md` for detailed deployment instructions.
 
 ## Learn More
 

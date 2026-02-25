@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import {
-  getAuthToken,
+  authenticatePaymob,
   createOrder,
   getPaymentKey,
   getRedirectUrl,
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
   });
 
   try {
-    const token = await getAuthToken();
+    const token = await authenticatePaymob();
     const orderId = await createOrder(token, {
       amountCents,
       currency: "EGP",

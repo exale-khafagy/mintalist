@@ -35,24 +35,50 @@ function getConfig() {
   };
 }
 
-export async function getAuthToken(): Promise<string> {
-  const { apiKey } = getConfig();
-  // Paymob Accept: some accounts use api_key, others username/password. Use PAYMOB_USERNAME + PAYMOB_PASSWORD if auth fails.
-  const body = process.env.PAYMOB_USERNAME
-    ? { username: process.env.PAYMOB_USERNAME, password: process.env.PAYMOB_PASSWORD }
-    : { api_key: apiKey };
-  const res = await fetch(`${PAYMOB_BASE}/auth/tokens`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Paymob auth failed: ${res.status} ${text}`);
+export function getPaymobConfig() {
+  const apiKey = process.env.PAYMOB_API_KEY;
+  const secretKey = process.env.PAYMOB_SECRET_KEY;
+  const integrationId = process.env.PAYMOB_INTEGRATION_ID;
+  const publicKey = process.env.PAYMOB_PUBLIC_KEY;
+  if (!apiKey || !secretKey || !integrationId || !publicKey) {
+    throw new Error("Missing Paymob environment variables");
   }
-  const data = (await res.json()) as { token?: string };
-  if (!data.token) throw new Error("Paymob auth: no token in response");
-  return data.token;
+  return {
+    apiKey,
+    secretKey,
+    integrationId: parseInt(integrationId, 10),
+    publicKey,
+    iframeId: process.env.PAYMOB_IFRAME_ID ?? "iframe_id",
+  };
+}
+
+export async function authenticatePaymob(retries = 3): Promise<string> {
+  const { apiKey } = getPaymobConfig();
+  for (let i = 0; i < retries; i++) {
+    try {
+      const body = process.env.PAYMOB_USERNAME
+        ? { username: process.env.PAYMOB_USERNAME, password: process.env.PAYMOB_PASSWORD }
+        : { api_key: apiKey };
+      const res = await fetch(`${PAYMOB_BASE}/auth/tokens`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (res.ok) {
+        const data = (await res.json()) as { token?: string };
+        if (!data.token) throw new Error("Paymob auth: no token in response");
+        return data.token;
+      }
+      if (res.status === 403) {
+        throw new Error("Incorrect credentials");
+      }
+      throw new Error(`Auth failed: ${res.status}`);
+    } catch (error) {
+      if (i === retries - 1) throw error;
+      await new Promise(res => setTimeout(res, 1000 * (i + 1))); // Exponential backoff
+    }
+  }
+  throw new Error("Auth retries exhausted");
 }
 
 export async function createOrder(

@@ -46,7 +46,9 @@ Set these in Vercel: **Project → Settings → Environment Variables**. Use **P
 | `UPLOADTHING_APP_ID` | Yes | UploadThing app ID |
 | `HUB_ADMIN_EMAILS` | Optional | Comma-separated emails allowed to access `/hub` |
 | `PAYMOB_API_KEY` | For payments | Paymob API key |
+| `PAYMOB_SECRET_KEY` | For payments | Paymob secret key for HMAC verification |
 | `PAYMOB_INTEGRATION_ID` | For payments | Paymob card integration ID |
+| `PAYMOB_PUBLIC_KEY` | For payments | Paymob public key for client-side operations |
 | `PAYMOB_IFRAME_ID` | Optional | Paymob iframe ID for hosted checkout |
 | `PAYMOB_HMAC_SECRET` | Recommended | Verify redirect callbacks (from Paymob dashboard) |
 | `PAYMOB_USERNAME` / `PAYMOB_PASSWORD` | Optional | If Paymob auth uses username/password instead of API key |

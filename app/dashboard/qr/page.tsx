@@ -1,6 +1,9 @@
+import dynamic from "next/dynamic";
 import { getCurrentVendor } from "@/lib/auth";
 
-import { QRCodeGenerator } from "@/components/dashboard/QRCodeGenerator";
+const QRCodeGenerator = dynamic(() => import("@/components/dashboard/QRCodeGenerator").then(mod => ({ default: mod.QRCodeGenerator })), {
+  loading: () => <div>Loading QR Code...</div>,
+});
 
 export default async function DashboardQRPage() {
   const vendor = await getCurrentVendor();
