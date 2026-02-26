@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 
 import { ExaleFooter } from "@/components/ExaleFooter";
 
-// --- NEW HELPER FUNCTION ---
 // Calculates if text should be black or white based on the background color
 function getContrastColor(hexColor: string | null) {
   if (!hexColor || !hexColor.startsWith("#")) return "#71717a"; // Default gray fallback
@@ -53,10 +52,9 @@ export default async function VendorPublicPage({ params }: Props) {
         }
       : { backgroundColor: vendor.brandColor || "#f9fafb" };
 
-  // Calculate dynamic text color for the footer
   const footerTextColor = 
     isPaid && vendor.backgroundImageUrl 
-      ? "#ffffff" // Always white on image backgrounds
+      ? "#ffffff"
       : getContrastColor(vendor.brandColor);
 
   return (
@@ -204,7 +202,6 @@ export default async function VendorPublicPage({ params }: Props) {
         )}
       </main>
       
-      {/* Pass the dynamic color down to your footer */}
       <ExaleFooter textColor={footerTextColor} />
     </div>
   );
