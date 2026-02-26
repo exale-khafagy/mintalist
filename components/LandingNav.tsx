@@ -105,9 +105,27 @@ export function LandingNav() {
               <div className="flex flex-col gap-2">
                 {isLoaded && user ? (
                   <>
-                    {/* User Profile Card */}
-                    <div className="mb-4 flex items-center gap-3 rounded-xl bg-muted/40 p-3 border border-border/50">
-                      <UserButton afterSignOutUrl="/" />
+                    {/* User Profile Card (Fully Clickable) */}
+                    <div className="relative mb-2 flex cursor-pointer items-center gap-3 rounded-xl border border-border/50 bg-muted/40 p-3 transition-colors hover:bg-muted/60">
+                      {/* Invisible stretched Clerk UserButton to act as the click target */}
+                      <div className="absolute inset-0 z-10 opacity-0">
+                        <UserButton
+                          afterSignOutUrl="/"
+                          appearance={{
+                            elements: {
+                              rootBox: "w-full h-full flex",
+                              userButtonTrigger: "w-full h-full flex-1 rounded-xl",
+                            },
+                          }}
+                        />
+                      </div>
+
+                      {/* Visuals under the invisible button */}
+                      <img
+                        src={user?.imageUrl}
+                        alt={displayName}
+                        className="h-10 w-10 shrink-0 rounded-full object-cover shadow-sm"
+                      />
                       <div className="flex flex-col overflow-hidden">
                         <span className="truncate text-sm font-semibold text-foreground">{displayName}</span>
                         <span className="text-xs text-muted-foreground">Manage account</span>
@@ -118,10 +136,16 @@ export function LandingNav() {
                     <Link
                       href="/dashboard"
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center rounded-lg px-3 py-3 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                      className="flex items-center rounded-lg px-3 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted"
                     >
                       Dashboard
                     </Link>
+
+                    {/* Theme Toggle */}
+                    <div className="flex items-center justify-between rounded-lg px-3 py-3 transition-colors hover:bg-muted/50">
+                      <span className="text-sm font-medium text-foreground">Theme</span>
+                      <ThemeToggle />
+                    </div>
                   </>
                 ) : (
                   <>
@@ -129,29 +153,26 @@ export function LandingNav() {
                     <Link
                       href="/sign-in"
                       onClick={() => setMobileOpen(false)}
-                      className="flex w-full items-center justify-center rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-foreground hover:bg-accent transition-colors"
+                      className="flex w-full items-center justify-center rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-accent"
                     >
                       Sign in
                     </Link>
                     <Link
                       href="/sign-up"
                       onClick={() => setMobileOpen(false)}
-                      className="mt-2 flex w-full items-center justify-center rounded-lg bg-emerald-600 px-4 py-3 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 transition-colors"
+                      className="mt-2 flex w-full items-center justify-center rounded-lg bg-emerald-600 px-4 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-emerald-700"
                     >
                       Get started
                     </Link>
+
+                    {/* Theme Toggle (Logged Out) */}
+                    <div className="mt-4 flex items-center justify-between rounded-lg px-3 py-3 transition-colors hover:bg-muted/50">
+                      <span className="text-sm font-medium text-foreground">Theme</span>
+                      <ThemeToggle />
+                    </div>
                   </>
                 )}
               </div>
-
-              {/* Theme Toggle (Pushed to bottom) */}
-              <div className="mt-auto pt-6">
-                <div className="flex items-center justify-between rounded-lg border border-border/50 bg-muted/20 px-4 py-3">
-                  <span className="text-sm font-medium text-foreground">Theme</span>
-                  <ThemeToggle />
-                </div>
-              </div>
-              
             </div>
           </div>
         </div>
