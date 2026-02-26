@@ -39,12 +39,12 @@ export function VendorsList({ vendors, baseUrl }: VendorsListProps) {
           placeholder="Search vendors..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none"
+          className="flex-1 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-500 focus:border-emerald-500 focus:outline-none"
         />
         <select
           value={tierFilter}
           onChange={(e) => setTierFilter(e.target.value as any)}
-          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none"
+          className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none"
         >
           <option value="ALL">All Tiers</option>
           <option value="FREE">Free</option>

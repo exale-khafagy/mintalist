@@ -1,3 +1,5 @@
+import "@/app/globals.css"; // This is the crucial missing line! (If your css is in a src folder, change to "@/src/app/globals.css")
+
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { isHubAdmin } from "@/lib/hub-auth";
