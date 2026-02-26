@@ -77,18 +77,17 @@ export function LandingNav() {
 
       {/* Mobile drawer overlay */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-40 sm:hidden" aria-hidden>
+        <div className="fixed left-0 top-0 z-50 h-[100dvh] w-full sm:hidden" aria-hidden>
+          {/* Dark blurred background overlay */}
           <button
             type="button"
-            className="absolute inset-0 bg-black/50"
+            className="absolute left-0 top-0 h-full w-full bg-black/60 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
             aria-label="Close menu"
           />
-          <div
-            className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col border-l border-border bg-white shadow-xl dark:bg-zinc-900"
-            style={{ zIndex: 1 }}
-          >
-            <div className="flex min-h-14 items-center justify-between border-b border-border px-4">
+          {/* Main solid background drawer */}
+          <div className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col border-l border-border bg-background shadow-2xl">
+            <div className="flex min-h-[3.5rem] items-center justify-between border-b border-border px-4">
               <span className="font-semibold text-foreground">Menu</span>
               <button
                 type="button"
@@ -99,7 +98,8 @@ export function LandingNav() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="flex flex-1 flex-col gap-1 p-4">
+            {/* Nav content list */}
+            <div className="flex flex-1 flex-col gap-1 overflow-y-auto p-4">
               <div className="flex min-h-[48px] items-center gap-3 rounded-lg px-3">
                 <ThemeToggle />
                 <span className="text-sm text-muted-foreground">Theme</span>
@@ -107,7 +107,7 @@ export function LandingNav() {
               {isLoaded && user ? (
                 <>
                   <div className="flex min-h-[48px] items-center gap-3 rounded-lg px-3">
-                    <span className="text-sm font-medium text-foreground truncate">{displayName}</span>
+                    <span className="truncate text-sm font-medium text-foreground">{displayName}</span>
                     <UserButton afterSignOutUrl="/" />
                   </div>
                   <Link
