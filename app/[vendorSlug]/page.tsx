@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { ExaleFooter } from "@/components/ExaleFooter";
 
-// Calculates if text should be black or white based on the background color
+// Calculates if text should be black or white based on the background color brightness
 function getContrastColor(hexColor: string | null) {
   if (!hexColor || !hexColor.startsWith("#")) return "#71717a"; // Default gray fallback
   const hex = hexColor.replace("#", "");
@@ -52,9 +52,10 @@ export default async function VendorPublicPage({ params }: Props) {
         }
       : { backgroundColor: vendor.brandColor || "#f9fafb" };
 
+  // Determine the best contrast color for the footer text
   const footerTextColor = 
     isPaid && vendor.backgroundImageUrl 
-      ? "#ffffff"
+      ? "#ffffff" // Always use white text over background images
       : getContrastColor(vendor.brandColor);
 
   return (
@@ -202,6 +203,7 @@ export default async function VendorPublicPage({ params }: Props) {
         )}
       </main>
       
+      {/* Pass the dynamic text color to the footer */}
       <ExaleFooter textColor={footerTextColor} />
     </div>
   );
