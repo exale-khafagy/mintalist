@@ -300,7 +300,7 @@ export default function OnboardingPage() {
                 )}
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-foreground">Location name (optional)</label>
+                <label className="mb-1 block text-sm font-medium text-foreground">Location name</label>
                 <Input
                   {...form.register("locationName")}
                   placeholder="e.g. Downtown"
@@ -308,7 +308,7 @@ export default function OnboardingPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-foreground">Address (optional)</label>
+                <label className="mb-1 block text-sm font-medium text-foreground">Address</label>
                 <Input
                   {...form.register("address")}
                   placeholder="Street, city"
@@ -316,7 +316,7 @@ export default function OnboardingPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-foreground">Phone (optional)</label>
+                <label className="mb-1 block text-sm font-medium text-foreground">Phone</label>
                 <Input
                   {...form.register("phone")}
                   placeholder="+20..."
@@ -324,7 +324,7 @@ export default function OnboardingPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-foreground">Your location (optional)</label>
+                <label className="mb-1 block text-sm font-medium text-foreground">Your location</label>
                 <p className="mb-2 text-xs text-muted-foreground">
                   Use your browser to save your coordinates. No API key required.
                 </p>

@@ -61,7 +61,7 @@ export function HubPromoForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="mb-1 block text-sm font-medium">Preset (optional)</label>
+        <label className="mb-1 block text-sm font-medium">Preset</label>
         <select
           value={presetIndex}
           onChange={(e) => applyPreset(Number(e.target.value))}

@@ -233,7 +233,7 @@ function VendorVisitForm({
             </div>
             <div>
               <label htmlFor="contactEmail" className="mb-1 block text-xs text-zinc-700">
-                Contact email (optional)
+                Contact email
               </label>
               <Input
                 id="contactEmail"
@@ -246,7 +246,7 @@ function VendorVisitForm({
             </div>
             <div>
               <label htmlFor="address" className="mb-1 block text-xs text-zinc-700">
-                Address (optional)
+                Address
               </label>
               <Input
                 id="address"
@@ -258,7 +258,7 @@ function VendorVisitForm({
             </div>
             <div>
               <label htmlFor="locationName" className="mb-1 block text-xs text-zinc-700">
-                Location name (optional)
+                Location name
               </label>
               <Input
                 id="locationName"
@@ -295,7 +295,7 @@ function VendorVisitForm({
             </div>
             <div>
               <label htmlFor="notes" className="mb-1 block text-xs text-zinc-700">
-                Notes from the visit (optional)
+                Notes from the visit
               </label>
               <textarea
                 id="notes"

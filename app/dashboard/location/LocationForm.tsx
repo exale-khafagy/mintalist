@@ -82,7 +82,7 @@ export function LocationForm({ defaultValues }: Props) {
         <p className="rounded-md bg-red-50 p-2 text-sm text-red-700">{error}</p>
       )}
       <div>
-        <label className="mb-1 block text-sm font-medium">Location name (optional)</label>
+        <label className="mb-1 block text-sm font-medium">Location name</label>
         <Input
           value={locationName}
           onChange={(e) => setLocationName(e.target.value)}
@@ -90,7 +90,7 @@ export function LocationForm({ defaultValues }: Props) {
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium">Address (optional)</label>
+        <label className="mb-1 block text-sm font-medium">Address</label>
         <Input
           value={address}
           onChange={(e) => setAddress(e.target.value)}
@@ -98,7 +98,7 @@ export function LocationForm({ defaultValues }: Props) {
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium">Phone (optional)</label>
+        <label className="mb-1 block text-sm font-medium">Phone</label>
         <Input
           type="tel"
           value={phone}
@@ -107,7 +107,7 @@ export function LocationForm({ defaultValues }: Props) {
         />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium">Coordinates (optional)</label>
+        <label className="mb-1 block text-sm font-medium">Coordinates</label>
         <p className="mb-2 text-xs text-muted-foreground">
           Use your browser to save your location. No API key required.
         </p>

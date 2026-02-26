@@ -242,7 +242,7 @@ export function ProfileForm({ tier, defaultValues }: Props) {
         </div>
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium">Logo (optional)</label>
+        <label className="mb-1 block text-sm font-medium">Logo</label>
         <p className="mb-2 text-xs text-muted-foreground">
           Upload or paste a URL. Shown on your public menu page.
         </p>
@@ -283,7 +283,7 @@ export function ProfileForm({ tier, defaultValues }: Props) {
       {canSetBackgroundImage && (
         <div>
           <label className="mb-1 block text-sm font-medium">
-            Background image (optional)
+            Background image
           </label>
           <p className="mb-2 text-xs text-muted-foreground">
             Upload or paste a URL. Shown behind your menu on the public page.

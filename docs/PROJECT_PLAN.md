@@ -56,7 +56,7 @@ The dashboard is the **single place** where a logged-in vendor manages their pub
 - **Flow:** You give a vendor a **voucher code** offline (e.g. on paper or WhatsApp). Vendor goes to **Dashboard → Settings**, enters the code in a “Redeem voucher” field, and submits. System validates the code and **upgrades their account** to the tier tied to that voucher (GOLD).
 - **No checkout:** No payment UI; just “Redeem” in settings.
 - **Implementation:**
-  - **DB:** `Voucher` model: `code` (unique), `tier` (GOLD), `redeemedAt` (optional), `redeemedByVendorId` (optional). Optional: `expiresAt`.
+  - **DB:** `Voucher` model: `code` (unique), `tier` (GOLD), `redeemedAt`, `redeemedByVendorId`. Optional: `expiresAt`.
   - **Admin:** You (or a simple admin script) create voucher records (e.g. via Prisma Studio or a small internal tool). No need for a full admin UI in Phase 1.
   - **API:** `POST /api/voucher/redeem` — body: `{ code }`. Auth: current user. Look up voucher by code; if not redeemed and not expired, set `redeemedAt`, `redeemedByVendorId`, and update `Vendor.tier` for the current user’s vendor. Return success/error.
   - **UI:** Settings page: input + “Redeem” button; on success show “You’re now on Tier X” and refresh tier display.

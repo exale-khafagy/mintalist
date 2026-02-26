@@ -35,7 +35,7 @@
   - Custom links.
   - Location name.
   - Address and phone.
-  - (Optional) Map/location link.
+  - Map/location link.
 
 Access: either **mintalist.com/[slug]** or **vendor.mintalist.com** (Tier 2).
 

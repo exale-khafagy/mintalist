@@ -148,7 +148,7 @@ export function MenuItemList({ initialItems }: { initialItems: MenuItem[] }) {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium">Description (optional)</label>
+                <label className="mb-1 block text-sm font-medium">Description</label>
                 <Input
                   value={form.description}
                   onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}

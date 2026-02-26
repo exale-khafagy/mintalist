@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import { useUser, UserButton } from "@clerk/nextjs";
+import { useUser, UserButton, useClerk, SignOutButton } from "@clerk/nextjs";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -14,6 +14,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 export function LandingNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, isLoaded } = useUser();
+  const { openUserProfile } = useClerk();
 
   const displayName =
     user?.firstName ?? user?.fullName ?? user?.primaryEmailAddress?.emailAddress?.split("@")[0] ?? "Account";
@@ -105,22 +106,15 @@ export function LandingNav() {
               <div className="flex flex-col gap-2">
                 {isLoaded && user ? (
                   <>
-                    {/* User Profile Card (Fully Clickable) */}
-                    <div className="relative mb-2 flex cursor-pointer items-center gap-3 rounded-xl border border-border/50 bg-muted/40 p-3 transition-colors hover:bg-muted/60">
-                      {/* Invisible stretched Clerk UserButton to act as the click target */}
-                      <div className="absolute inset-0 z-10 opacity-0">
-                        <UserButton
-                          afterSignOutUrl="/"
-                          appearance={{
-                            elements: {
-                              rootBox: "w-full h-full flex",
-                              userButtonTrigger: "w-full h-full flex-1 rounded-xl",
-                            },
-                          }}
-                        />
-                      </div>
-
-                      {/* Visuals under the invisible button */}
+                    {/* Programmatic User Profile Card */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileOpen(false);
+                        openUserProfile();
+                      }}
+                      className="mb-2 flex w-full cursor-pointer items-center gap-3 rounded-xl border border-border/50 bg-muted/40 p-3 text-left transition-colors hover:bg-muted/60"
+                    >
                       <img
                         src={user?.imageUrl}
                         alt={displayName}
@@ -130,7 +124,7 @@ export function LandingNav() {
                         <span className="truncate text-sm font-semibold text-foreground">{displayName}</span>
                         <span className="text-xs text-muted-foreground">Manage account</span>
                       </div>
-                    </div>
+                    </button>
                     
                     {/* Dashboard Link */}
                     <Link
@@ -140,6 +134,16 @@ export function LandingNav() {
                     >
                       Dashboard
                     </Link>
+
+                    {/* Sign Out Button */}
+                    <SignOutButton>
+                      <button 
+                        onClick={() => setMobileOpen(false)}
+                        className="flex w-full items-center rounded-lg px-3 py-3 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/50"
+                      >
+                        Sign out
+                      </button>
+                    </SignOutButton>
 
                     {/* Theme Toggle */}
                     <div className="flex items-center justify-between rounded-lg px-3 py-3 transition-colors hover:bg-muted/50">
