@@ -25,7 +25,7 @@ export function LandingNav() {
         href="/dashboard"
         className="min-h-[44px] shrink-0 items-center justify-center rounded-full text-sm font-medium text-muted-foreground hover:text-foreground sm:inline-flex sm:px-3"
       >
-        <span className="truncate max-w-[120px] sm:max-w-[180px]" title={displayName}>
+        <span className="max-w-[120px] truncate sm:max-w-[180px]" title={displayName}>
           {displayName}
         </span>
         <span className="ml-1 hidden sm:inline">· Dashboard</span>
@@ -86,56 +86,72 @@ export function LandingNav() {
             aria-label="Close menu"
           />
           {/* Main solid background drawer */}
-          <div className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col border-l border-border bg-background shadow-2xl">
-            <div className="flex min-h-[3.5rem] items-center justify-between border-b border-border px-4">
+          <div className="absolute right-0 top-0 flex h-full w-full max-w-[280px] flex-col border-l border-border bg-background shadow-2xl">
+            <div className="flex min-h-[3.5rem] items-center justify-between border-b border-border px-5">
               <span className="font-semibold text-foreground">Menu</span>
               <button
                 type="button"
                 onClick={() => setMobileOpen(false)}
-                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+                className="flex min-h-[44px] min-w-[44px] -mr-3 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
                 aria-label="Close menu"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
+            
             {/* Nav content list */}
-            <div className="flex flex-1 flex-col gap-1 overflow-y-auto p-4">
-              <div className="flex min-h-[48px] items-center gap-3 rounded-lg px-3">
-                <ThemeToggle />
-                <span className="text-sm text-muted-foreground">Theme</span>
+            <div className="flex flex-1 flex-col overflow-y-auto p-5">
+              
+              <div className="flex flex-col gap-2">
+                {isLoaded && user ? (
+                  <>
+                    {/* User Profile Card */}
+                    <div className="mb-4 flex items-center gap-3 rounded-xl bg-muted/40 p-3 border border-border/50">
+                      <UserButton afterSignOutUrl="/" />
+                      <div className="flex flex-col overflow-hidden">
+                        <span className="truncate text-sm font-semibold text-foreground">{displayName}</span>
+                        <span className="text-xs text-muted-foreground">Manage account</span>
+                      </div>
+                    </div>
+                    
+                    {/* Dashboard Link */}
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center rounded-lg px-3 py-3 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                    >
+                      Dashboard
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    {/* Logged Out Actions */}
+                    <Link
+                      href="/sign-in"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex w-full items-center justify-center rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-foreground hover:bg-accent transition-colors"
+                    >
+                      Sign in
+                    </Link>
+                    <Link
+                      href="/sign-up"
+                      onClick={() => setMobileOpen(false)}
+                      className="mt-2 flex w-full items-center justify-center rounded-lg bg-emerald-600 px-4 py-3 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 transition-colors"
+                    >
+                      Get started
+                    </Link>
+                  </>
+                )}
               </div>
-              {isLoaded && user ? (
-                <>
-                  <div className="flex min-h-[48px] items-center gap-3 rounded-lg px-3">
-                    <span className="truncate text-sm font-medium text-foreground">{displayName}</span>
-                    <UserButton afterSignOutUrl="/" />
-                  </div>
-                  <Link
-                    href="/dashboard"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex min-h-[48px] items-center rounded-lg px-4 text-sm font-medium text-foreground hover:bg-muted"
-                  >
-                    Dashboard
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/sign-in"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex min-h-[48px] items-center rounded-lg px-4 text-sm font-medium text-foreground hover:bg-muted"
-                  >
-                    Sign in
-                  </Link>
-                  <Link
-                    href="/sign-up"
-                    onClick={() => setMobileOpen(false)}
-                    className="mt-2 flex min-h-[48px] items-center justify-center rounded-full bg-emerald-600 px-4 text-sm font-medium text-white hover:bg-emerald-700"
-                  >
-                    Get started
-                  </Link>
-                </>
-              )}
+
+              {/* Theme Toggle (Pushed to bottom) */}
+              <div className="mt-auto pt-6">
+                <div className="flex items-center justify-between rounded-lg border border-border/50 bg-muted/20 px-4 py-3">
+                  <span className="text-sm font-medium text-foreground">Theme</span>
+                  <ThemeToggle />
+                </div>
+              </div>
+              
             </div>
           </div>
         </div>
