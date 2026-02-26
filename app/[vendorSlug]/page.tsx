@@ -3,6 +3,18 @@ import { notFound } from "next/navigation";
 
 import { ExaleFooter } from "@/components/ExaleFooter";
 
+// --- NEW HELPER FUNCTION ---
+// Calculates if text should be black or white based on the background color
+function getContrastColor(hexColor: string | null) {
+  if (!hexColor || !hexColor.startsWith("#")) return "#71717a"; // Default gray fallback
+  const hex = hexColor.replace("#", "");
+  const r = parseInt(hex.substring(0, 2), 16) || 0;
+  const g = parseInt(hex.substring(2, 4), 16) || 0;
+  const b = parseInt(hex.substring(4, 6), 16) || 0;
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  return yiq >= 128 ? "#18181b" : "#ffffff"; // Dark gray for light bg, White for dark bg
+}
+
 type Props = {
   params: Promise<{ vendorSlug: string }>;
 };
@@ -26,13 +38,12 @@ export default async function VendorPublicPage({ params }: Props) {
 
   if (!vendor) notFound();
 
-  const hasLinks =
-    vendor.socialLinks.length > 0 || vendor.customLinks.length > 0;
-  const hasLocation =
-    vendor.locationName || vendor.address || vendor.phone;
+  const hasLinks = vendor.socialLinks.length > 0 || vendor.customLinks.length > 0;
+  const hasLocation = vendor.locationName || vendor.address || vendor.phone;
 
   const isPaid = vendor.tier === "GOLD";
   const showAds = vendor.tier === "FREE";
+  
   const backgroundStyle =
     isPaid && vendor.backgroundImageUrl
       ? {
@@ -42,12 +53,18 @@ export default async function VendorPublicPage({ params }: Props) {
         }
       : { backgroundColor: vendor.brandColor || "#f9fafb" };
 
+  // Calculate dynamic text color for the footer
+  const footerTextColor = 
+    isPaid && vendor.backgroundImageUrl 
+      ? "#ffffff" // Always white on image backgrounds
+      : getContrastColor(vendor.brandColor);
+
   return (
     <div className="flex min-h-screen flex-col" style={backgroundStyle}>
       <main className="flex-1 px-3 py-4 sm:px-4 sm:py-8">
         <div
           className="mx-auto max-w-2xl rounded-xl border border-border bg-card/95 shadow-sm backdrop-blur-sm"
-          style={{ borderTopColor: vendor.brandColor, borderTopWidth: 4 }}
+          style={{ borderTopColor: vendor.brandColor || undefined, borderTopWidth: 4 }}
         >
           <div className="p-4 sm:p-6">
             <header className="mb-4 flex flex-wrap items-center gap-3 sm:mb-6 sm:gap-4">
@@ -61,7 +78,7 @@ export default async function VendorPublicPage({ params }: Props) {
               <div className="min-w-0 flex-1">
                 <h1
                   className="truncate text-xl font-semibold sm:text-2xl"
-                  style={{ color: vendor.brandColor }}
+                  style={{ color: vendor.brandColor || "inherit" }}
                 >
                   {vendor.name}
                 </h1>
@@ -114,7 +131,7 @@ export default async function VendorPublicPage({ params }: Props) {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground shadow-sm transition hover:bg-accent hover:text-accent-foreground"
-                      style={{ borderColor: vendor.brandColor }}
+                      style={{ borderColor: vendor.brandColor || undefined }}
                     >
                       {link.platform}
                     </a>
@@ -126,7 +143,7 @@ export default async function VendorPublicPage({ params }: Props) {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground shadow-sm transition hover:bg-accent hover:text-accent-foreground"
-                      style={{ borderColor: vendor.brandColor }}
+                      style={{ borderColor: vendor.brandColor || undefined }}
                     >
                       {link.title}
                     </a>
@@ -186,7 +203,9 @@ export default async function VendorPublicPage({ params }: Props) {
           </div>
         )}
       </main>
-      <ExaleFooter />
+      
+      {/* Pass the dynamic color down to your footer */}
+      <ExaleFooter textColor={footerTextColor} />
     </div>
   );
 }
