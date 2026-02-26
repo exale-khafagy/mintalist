@@ -6,7 +6,7 @@ import { randomSlug } from "@/lib/slug";
 /**
  * POST /api/vendor/downgrade
  * Downgrade the current vendor to Silver (FREE).
- * Only allowed when tier is PAID_1.
+ * Only allowed when tier is GOLD.
  * Sets tier to FREE, assigns a new random slug (custom URL is lost), and clears background image.
  */
 export async function POST() {
@@ -18,7 +18,7 @@ export async function POST() {
   });
   if (!vendor) return NextResponse.json({ error: "Vendor not found" }, { status: 404 });
 
-  if (vendor.tier !== "PAID_1") {
+  if (vendor.tier !== "GOLD") {
     return NextResponse.json(
       { error: "You are already on Silver. No downgrade needed." },
       { status: 400 }

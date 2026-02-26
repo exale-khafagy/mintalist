@@ -1,11 +1,11 @@
--- Step 1: Update all PAID_2 rows to PAID_1 (PostgreSQL cannot drop an enum value that is in use)
-UPDATE "Vendor" SET tier = 'PAID_1' WHERE tier = 'PAID_2';
-UPDATE "Voucher" SET tier = 'PAID_1' WHERE tier = 'PAID_2';
-UPDATE "Payment" SET tier = 'PAID_1' WHERE tier = 'PAID_2';
-UPDATE "VendorVisit" SET "agreedTier" = 'PAID_1' WHERE "agreedTier" = 'PAID_2';
+-- Step 1: Update all GOLD rows to GOLD (PostgreSQL cannot drop an enum value that is in use)
+UPDATE "Vendor" SET tier = 'GOLD' WHERE tier = 'GOLD';
+UPDATE "Voucher" SET tier = 'GOLD' WHERE tier = 'GOLD';
+UPDATE "Payment" SET tier = 'GOLD' WHERE tier = 'GOLD';
+UPDATE "VendorVisit" SET "agreedTier" = 'GOLD' WHERE "agreedTier" = 'GOLD';
 
--- Step 2: Recreate enum without PAID_2
-CREATE TYPE "Tier_new" AS ENUM ('FREE', 'PAID_1');
+-- Step 2: Recreate enum without GOLD
+CREATE TYPE "Tier_new" AS ENUM ('FREE', 'GOLD');
 ALTER TABLE "Vendor" ALTER COLUMN "tier" TYPE "Tier_new" USING tier::text::"Tier_new";
 ALTER TABLE "Voucher" ALTER COLUMN "tier" TYPE "Tier_new" USING tier::text::"Tier_new";
 ALTER TABLE "Payment" ALTER COLUMN "tier" TYPE "Tier_new" USING tier::text::"Tier_new";

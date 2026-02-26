@@ -11,7 +11,7 @@ datasource db {
 
 enum Tier {
   FREE
-  PAID_1
+  GOLD
 }
 
 model Vendor {
@@ -168,7 +168,7 @@ model VendorVisit {
   contactEmail    String?
   address         String?
   locationName    String?  // e.g. "Downtown branch"
-  agreedTier      Tier     // Silver (FREE), Gold (PAID_1)
+  agreedTier      Tier     // Silver (FREE), Gold (GOLD)
   visitDate       DateTime @default(now())
   notes           String?  // Free text from the visit
   status          String   @default("PENDING") // PENDING | CONTACTED | ONBOARDED

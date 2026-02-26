@@ -31,7 +31,7 @@ export default async function VendorPublicPage({ params }: Props) {
   const hasLocation =
     vendor.locationName || vendor.address || vendor.phone;
 
-  const isPaid = vendor.tier === "PAID_1";
+  const isPaid = vendor.tier === "GOLD";
   const showAds = vendor.tier === "FREE";
   const backgroundStyle =
     isPaid && vendor.backgroundImageUrl

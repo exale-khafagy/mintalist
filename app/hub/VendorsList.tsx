@@ -8,7 +8,7 @@ interface Vendor {
   id: string;
   name: string;
   slug: string;
-  tier: "FREE" | "PAID_1";
+  tier: "FREE" | "GOLD";
   _count: { menuItems: number };
 }
 
@@ -19,7 +19,7 @@ interface VendorsListProps {
 
 export function VendorsList({ vendors, baseUrl }: VendorsListProps) {
   const [search, setSearch] = useState("");
-  const [tierFilter, setTierFilter] = useState<"ALL" | "FREE" | "PAID_1">("ALL");
+  const [tierFilter, setTierFilter] = useState<"ALL" | "FREE" | "GOLD">("ALL");
 
   const filteredVendors = useMemo(() => {
     return vendors.filter((v) => {
@@ -48,7 +48,7 @@ export function VendorsList({ vendors, baseUrl }: VendorsListProps) {
         >
           <option value="ALL">All Tiers</option>
           <option value="FREE">Free</option>
-          <option value="PAID_1">Gold</option>
+          <option value="GOLD">Gold</option>
         </select>
       </div>
 

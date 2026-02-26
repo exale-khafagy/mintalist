@@ -30,7 +30,7 @@ This document plans the fixes and features requested: onboarding step 1 = busine
 
 ## 2. Free tier: No option to modify URL in dashboard
 
-**Current behavior:** Profile form uses `canEditSlug = tier === "PAID_1" || tier === "PAID_2"`. For FREE, slug is rendered as `<span>{slug}</span>` inside the same bordered box, with “Custom URL available on Gold or Platinum. Upgrade”.
+**Current behavior:** Profile form uses `canEditSlug = tier === "GOLD"`. For FREE, slug is rendered as `<span>{slug}</span>` inside the same bordered box, with “Custom URL available on Gold. Upgrade”.
 
 **Issue:** Either (a) the block still looks like an input, or (b) tier is not FREE in DB. Ensure UI is clearly read-only and backend stays strict.
 
@@ -38,11 +38,11 @@ This document plans the fixes and features requested: onboarding step 1 = busine
 
 - **Profile form (`app/dashboard/profile/ProfileForm.tsx`):**
   - For FREE: Do not show an input-like box. Show a simple line: “Your menu link: `mintalist.com/{slug}`” with a “Copy link” button and “Custom URL on Gold or Platinum — Upgrade”.
-  - For PAID_1/PAID_2: Keep current editable slug input.
+  - For GOLD: Keep current editable slug input.
   - Ensure `tier` prop is compared strictly (e.g. `tier === "FREE"`).
 
 - **Profile API (`app/api/vendor/profile/route.ts`):**
-  - Already rejects slug update for non–PAID tiers (403). No change needed; optional: return a clear error message that “Custom URL is for Gold/Platinum only”.
+  - Already rejects slug update for non–PAID tiers (403). No change needed; optional: return a clear error message that “Custom URL is for Gold only”.
 
 - **Verification:** After signup with Silver (FREE), confirm in DB that `Vendor.tier === "FREE"` and that profile page shows the read-only link and no slug input.
 

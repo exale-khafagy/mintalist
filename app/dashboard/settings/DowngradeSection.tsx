@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-type Tier = "FREE" | "PAID_1";
+type Tier = "FREE" | "GOLD";
 
 type Props = {
   tier: Tier;

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 
-type Tier = "FREE" | "PAID_1";
+type Tier = "FREE" | "GOLD";
 
 export function HubVendorForm({
   vendorId,
@@ -51,7 +51,7 @@ export function HubVendorForm({
       <div className="mt-3 flex flex-wrap items-center gap-4">
         {([
           { value: "FREE" as const, label: "Silver" },
-          { value: "PAID_1" as const, label: "Gold" },
+          { value: "GOLD" as const, label: "Gold" },
         ]).map(({ value: t, label }) => (
           <label key={t} className="flex cursor-pointer items-center gap-2">
             <input

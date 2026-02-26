@@ -19,9 +19,9 @@ export async function POST(req: Request) {
 
   const code = body.code?.trim().toUpperCase();
   const tier = body.tier;
-  if (!code || !tier || !["FREE", "PAID_1"].includes(tier)) {
+  if (!code || !tier || !["FREE", "GOLD"].includes(tier)) {
     return NextResponse.json(
-      { error: "Please enter a code and select Silver (FREE) or Gold (PAID_1)." },
+      { error: "Please enter a code and select Silver (FREE) or Gold (GOLD)." },
       { status: 400 }
     );
   }
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     const voucher = await prisma.voucher.create({
       data: {
         code,
-        tier: tier as "FREE" | "PAID_1",
+        tier: tier as "FREE" | "GOLD",
         expiresAt,
       },
     });

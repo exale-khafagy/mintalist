@@ -1,7 +1,7 @@
 /**
  * Create a voucher code (for admin use).
  * Run: npx tsx scripts/create-voucher.ts <CODE> <TIER> [expiresInDays]
- * TIER: PAID_1 (Gold) or FREE (Silver). Example: npx tsx scripts/create-voucher.ts SUMMER2025 PAID_1 30
+ * TIER: GOLD (Gold) or FREE (Silver). Example: npx tsx scripts/create-voucher.ts SUMMER2025 GOLD 30
  */
 import "dotenv/config";
 import { config } from "dotenv";
@@ -16,12 +16,12 @@ const expiresInDays = process.argv[4] ? parseInt(process.argv[4], 10) : undefine
 
 if (!code || !tier) {
   console.error("Usage: npx tsx scripts/create-voucher.ts <CODE> <TIER> [expiresInDays]");
-  console.error("Example: npx tsx scripts/create-voucher.ts SUMMER2025 PAID_1");
+  console.error("Example: npx tsx scripts/create-voucher.ts SUMMER2025 GOLD");
   process.exit(1);
 }
 
-if (tier !== "PAID_1" && tier !== "FREE") {
-  console.error("TIER must be PAID_1 (Gold) or FREE (Silver)");
+if (tier !== "GOLD" && tier !== "FREE") {
+  console.error("TIER must be GOLD (Gold) or FREE (Silver)");
   process.exit(1);
 }
 
@@ -43,7 +43,7 @@ async function main() {
   const voucher = await prisma.voucher.create({
     data: {
       code,
-      tier: tier as "PAID_1" | "FREE",
+      tier: tier as "GOLD" | "FREE",
       expiresAt,
     },
   });

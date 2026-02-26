@@ -32,7 +32,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
 
-  const canEditSlug = vendor.tier === "PAID_1";
+  const canEditSlug = vendor.tier === "GOLD";
   const canSetBackgroundImage = canEditSlug;
 
   if (body.slug !== undefined && body.slug !== vendor.slug) {

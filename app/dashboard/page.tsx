@@ -14,7 +14,7 @@ import { DashboardTour } from "@/components/DashboardTour";
 
 const TIER_LABELS: Record<string, string> = {
   FREE: "Silver",
-  PAID_1: "Gold",
+  GOLD: "Gold",
 };
 
 export default async function DashboardOverviewPage() {

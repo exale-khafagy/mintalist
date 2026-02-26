@@ -62,8 +62,7 @@ Access: either **mintalist.com/[slug]** or **vendor.mintalist.com** (Tier 2).
 ## Technical Tiers (for implementation)
 
 - **FREE** — `tier: FREE` in DB.
-- **PAID_1** — Custom slug, background image allowed, no ads.
-- **PAID_2** — Same + subdomain; app resolves `vendor.mintalist.com` → that vendor’s profile.
+- **GOLD** — Custom slug, background image allowed, no ads.
 
 ---
 

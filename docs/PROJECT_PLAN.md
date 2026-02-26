@@ -32,7 +32,7 @@ The dashboard is the **single place** where a logged-in vendor manages their pub
 |-------|--------|--------|
 | `/dashboard` | Overview | Summary: current tier, link to public profile, quick stats (e.g. menu item count). Optional: “Complete your profile” prompts. |
 | `/dashboard/menu` | Menu | CRUD for menu items (name, description, price, isAvailable). Reorder optional later. |
-| `/dashboard/profile` | Profile | Business name, slug (if tier allows), logo upload, brand color. For PAID_1/2: background image. |
+| `/dashboard/profile` | Profile | Business name, slug (if tier allows), logo upload, brand color. For GOLD: background image. |
 | `/dashboard/links` | Links | **Social links** (Instagram, Facebook, TikTok, X, etc.) and **custom links** (title + URL). Two sub-sections or one list with type. |
 | `/dashboard/location` | Location | Location name, full address, phone number(s). Optional: “Open in Maps” link. |
 | `/dashboard/qr` | QR Code | Existing QRCodeGenerator: show QR, download PNG. |
@@ -41,11 +41,11 @@ The dashboard is the **single place** where a logged-in vendor manages their pub
 
 ### 2.2 Dashboard Data (Summary)
 
-- **Profile:** name, slug, logoUrl, brandColor, backgroundImageUrl (PAID_1/2).
+- **Profile:** name, slug, logoUrl, brandColor, backgroundImageUrl (GOLD).
 - **Menu:** MenuItem (name, description, price, isAvailable) per Vendor.
 - **Links:** Social links (type + URL) and custom links (title + URL); store in DB (e.g. `VendorSocialLink`, `VendorCustomLink` or a single `Link` model with type).
 - **Location:** address, phone, locationName (e.g. “Downtown”) on Vendor or a `VendorLocation` table.
-- **Account:** tier (FREE | PAID_1). No payment in the app—you send promo codes after they pay you directly; they redeem in Settings.
+- **Account:** tier (FREE | GOLD). No payment in the app—you send promo codes after they pay you directly; they redeem in Settings.
 
 ---
 
@@ -53,30 +53,30 @@ The dashboard is the **single place** where a logged-in vendor manages their pub
 
 ### 3.1 Voucher Code (Offline → Settings)
 
-- **Flow:** You give a vendor a **voucher code** offline (e.g. on paper or WhatsApp). Vendor goes to **Dashboard → Settings**, enters the code in a “Redeem voucher” field, and submits. System validates the code and **upgrades their account** to the tier tied to that voucher (PAID_1).
+- **Flow:** You give a vendor a **voucher code** offline (e.g. on paper or WhatsApp). Vendor goes to **Dashboard → Settings**, enters the code in a “Redeem voucher” field, and submits. System validates the code and **upgrades their account** to the tier tied to that voucher (GOLD).
 - **No checkout:** No payment UI; just “Redeem” in settings.
 - **Implementation:**
-  - **DB:** `Voucher` model: `code` (unique), `tier` (PAID_1), `redeemedAt` (optional), `redeemedByVendorId` (optional). Optional: `expiresAt`.
+  - **DB:** `Voucher` model: `code` (unique), `tier` (GOLD), `redeemedAt` (optional), `redeemedByVendorId` (optional). Optional: `expiresAt`.
   - **Admin:** You (or a simple admin script) create voucher records (e.g. via Prisma Studio or a small internal tool). No need for a full admin UI in Phase 1.
   - **API:** `POST /api/voucher/redeem` — body: `{ code }`. Auth: current user. Look up voucher by code; if not redeemed and not expired, set `redeemedAt`, `redeemedByVendorId`, and update `Vendor.tier` for the current user’s vendor. Return success/error.
   - **UI:** Settings page: input + “Redeem” button; on success show “You’re now on Tier X” and refresh tier display.
 
 ### 3.2 Online payment
 
-- **Removed.** Upgrades are via **voucher redemption only** (Settings). Checkout page shows pricing and links to Settings to redeem a code. Clicks “Pay with Paymob” (or similar). Redirect to Paymob payment page. After successful payment, Paymob redirects back to your **callback URL** (or sends a webhook). Your backend verifies the payment and updates `Vendor.tier` to PAID_1 or PAID_2.
+- **Removed.** Upgrades are via **voucher redemption only** (Settings). Checkout page shows pricing and links to Settings to redeem a code. Clicks “Pay with Paymob” (or similar). Redirect to Paymob payment page. After successful payment, Paymob redirects back to your **callback URL** (or sends a webhook). Your backend verifies the payment and updates `Vendor.tier` to GOLD.
 - **Implementation:**
 ---
 
 ## 4. Tiers and Features (Recap)
 
-| Feature | FREE | PAID_1 |
+| Feature | FREE | GOLD |
 |--------|------|--------|
 | Background | Color only | Background image |
 | Logo | ✅ | ✅ |
 | Custom slug | Auto only | mintalist.com/vendor |
 | Ads | Shown | No |
 
-- **Voucher:** Redeem in Settings → tier set to PAID_1 (Gold).
+- **Voucher:** Redeem in Settings → tier set to GOLD (Gold).
 
 ---
 
@@ -109,9 +109,9 @@ The dashboard is the **single place** where a logged-in vendor manages their pub
 - **Dashboard → Settings:** “Redeem voucher” input + button; show current tier; success/error feedback.
 - **Tooling:** You create vouchers via Prisma Studio or a small script (no admin UI required in this phase).
 
-**Deliverables:** Vendors can redeem vouchers in Settings and get upgraded to PAID_1 or PAID_2.
+**Deliverables:** Vendors can redeem vouchers in Settings and get upgraded to GOLD.
 
-**Creating vouchers:** Use Prisma Studio (`npx prisma studio`) to insert into `Voucher` (code, tier: PAID_1 or PAID_2, optional expiresAt), or run: `npx tsx scripts/create-voucher.ts <CODE> <PAID_1|PAID_2> [expiresInDays]`.
+**Creating vouchers:** Use Prisma Studio (`npx prisma studio`) to insert into `Voucher` (code, tier: GOLD, optional expiresAt), or run: `npx tsx scripts/create-voucher.ts <CODE> <GOLD> [expiresInDays]`.
 
 ---
 
@@ -123,17 +123,17 @@ The dashboard is the **single place** where a logged-in vendor manages their pub
 ---
 
 ### Phase 5 — Tier Enforcement and Subdomains
-- **Tier rules:** FREE: background color only, show ads; PAID_1/2: allow background image, no ads. Enforce in dashboard (disable/hide background image for FREE) and on public page (ads only for FREE).
-- **Subdomain (PAID_2):** DNS: `*.mintalist.com` → app. Middleware rewrites `slug.mintalist.com` to `/{slug}`; public page allows subdomain access only for PAID_2. Set `NEXT_PUBLIC_APP_URL=https://mintalist.com` so subdomain detection works.
-- **Custom slug:** PAID_1/2 can edit slug in Profile; FREE sees slug read-only with “Upgrade” link.
+- **Tier rules:** FREE: background color only, show ads; GOLD: allow background image, no ads. Enforce in dashboard (disable/hide background image for FREE) and on public page (ads only for FREE).
+- **Subdomain (GOLD):** DNS: `*.mintalist.com` → app. Middleware rewrites `slug.mintalist.com` to `/{slug}`; public page allows subdomain access only for GOLD. Set `NEXT_PUBLIC_APP_URL=https://mintalist.com` so subdomain detection works.
+- **Custom slug:** GOLD can edit slug in Profile; FREE sees slug read-only with “Upgrade” link.
 
-**Deliverables:** Tier features enforced; PAID_2 vendors accessible at **slug.mintalist.com**.
+**Deliverables:** Tier features enforced; GOLD vendors accessible at **slug.mintalist.com**.
 
 ---
 
 ### Phase 6 — Polish
 - Ads placement and design for Free tier.
-- Background image upload (UploadThing) and display for PAID_1/2.
+- Background image upload (UploadThing) and display for GOLD.
 - Dashboard overview page (tier, link to profile, prompts).
 - Error handling, loading states, and copy tweaks.
 
@@ -141,7 +141,7 @@ The dashboard is the **single place** where a logged-in vendor manages their pub
 
 ### Hub — Management Dashboard (Post–Phase 6)
 - **URL:** `/hub`. Protected: only users whose Clerk ID is in `HUB_ADMIN_USER_IDS` can access.
-- **Vendors:** List all businesses; open a vendor to change tier (FREE / PAID_1 / PAID_2).
+- **Vendors:** List all businesses; open a vendor to change tier (FREE / GOLD).
 - **Promo codes:** Create voucher codes (code + tier + optional expiry). Vendors redeem in Dashboard → Settings.
 - **Details:** See `docs/HUB_SETUP.md`.
 
@@ -155,7 +155,7 @@ The dashboard is the **single place** where a logged-in vendor manages their pub
 | **2** | Profile completeness | Links (social + custom), Location (address, phone), public page shows all |
 | **3** | Vouchers | Voucher model, redeem API, Settings “Redeem voucher” UI |
 | **4** | Get Gold | Get Gold page (no payment); upgrades via promo codes only |
-| **5** | Tiers + subdomains | Tier enforcement, ads for FREE, subdomain for PAID_2 |
+| **5** | Tiers + subdomains | Tier enforcement, ads for FREE, subdomain for GOLD |
 | **6** | Polish | Ads design, background image, overview, UX |
 
 ---

@@ -27,7 +27,7 @@ Use **HUB_ADMIN_EMAILS** for access by email (recommended for the founder). Use 
 
 | Section        | Purpose |
 |----------------|--------|
-| **Vendors**    | List all businesses; open “Manage” to change a vendor’s tier (FREE / PAID_1 / PAID_2). |
+| **Vendors**    | List all businesses; open “Manage” to change a vendor’s tier (FREE / GOLD). |
 | **Promo codes**| Create voucher codes (code + tier + optional expiry in days). Vendors redeem them in Dashboard → Settings. |
 
 ## Add/remove businesses
@@ -39,5 +39,5 @@ Use **HUB_ADMIN_EMAILS** for access by email (recommended for the founder). Use 
 
 ## API (Hub-only)
 
-- `PATCH /api/hub/vendors/[id]` — body `{ "tier": "FREE" \| "PAID_1" \| "PAID_2" }`. Requires Hub admin.
-- `POST /api/hub/promo` — body `{ "code": "PROMO1", "tier": "PAID_1", "expiresInDays": 30 }`. Creates a voucher. Requires Hub admin.
+- `PATCH /api/hub/vendors/[id]` — body `{ "tier": "FREE" \| "GOLD" }`. Requires Hub admin.
+- `POST /api/hub/promo` — body `{ "code": "PROMO1", "tier": "GOLD", "expiresInDays": 30 }`. Creates a voucher. Requires Hub admin.

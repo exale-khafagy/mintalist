@@ -9,7 +9,7 @@ interface Vendor {
   id: string;
   name: string;
   slug: string;
-  tier: "FREE" | "PAID_1";
+  tier: "FREE" | "GOLD";
   _count: { menuItems: number; socialLinks: number; customLinks: number };
 }
 

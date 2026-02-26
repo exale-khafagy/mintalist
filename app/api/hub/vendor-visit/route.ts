@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-const tierValues = ["FREE", "PAID_1"] as const;
+const tierValues = ["FREE", "GOLD"] as const;
 
 export async function POST(req: Request) {
   const allowed = await isHubAdmin();
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
   const agreedTier = body.agreedTier?.trim().toUpperCase();
   if (!agreedTier || !tierValues.includes(agreedTier as (typeof tierValues)[number])) {
     return NextResponse.json(
-      { error: "agreedTier must be FREE or PAID_1" },
+      { error: "agreedTier must be FREE or GOLD" },
       { status: 400 }
     );
   }
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
         contactEmail: body.contactEmail?.trim() || undefined,
         address: body.address?.trim() || undefined,
         locationName: body.locationName?.trim() || undefined,
-        agreedTier: agreedTier as "FREE" | "PAID_1",
+        agreedTier: agreedTier as "FREE" | "GOLD",
         notes: body.notes?.trim() || undefined,
       },
     });

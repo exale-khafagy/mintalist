@@ -48,7 +48,7 @@ export function ProfileForm({ tier, defaultValues }: Props) {
   const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
   const slugCheckRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const canEditSlug = tier === "PAID_1";
+  const canEditSlug = tier === "GOLD";
   const menuLink = getVendorPublicUrl(slug, BASE_URL);
   const mainHost = BASE_URL.replace(/^https?:\/\//, "").split("/")[0].replace(/^www\./, "") || "mintalist.com";
 

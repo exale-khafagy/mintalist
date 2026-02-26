@@ -1,4 +1,4 @@
-export type Tier = "FREE" | "PAID_1";
+export type Tier = "FREE" | "GOLD";
 
 /**
  * Build the public URL for a vendor (path-based: mintalist.com/slug).
